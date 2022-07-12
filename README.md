@@ -50,22 +50,35 @@
     ```
     APP_NAME=アプリケーション名
     DB_DATABASE=データベース名
+    DB_USER=データベースユーザー名
     DB_PASSWORD=パスワード
     ```
     編集が完了したら`.devcontainer/db/init/init.sql`を新規作成します。
     - `init.sql`ファイル内に下記内容を追記します。
     `CREATE DATABASE IF NOT EXISTS .envファイル追記したデータベース名 CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;`
 
+    - `.devcontainer/proxy/server.conf`ファイルの以下項目を変更します.
+      `$APP_NAME`は.`.env`ファイル記載の`APP_NAME=アプリケーションを指定`
+      ```
+      root   /var/www/html/`$APP_NAME`/public;
+      ```
+
 3. `/.devcontainer`ディレクトリに移動し`docker-compose build`を実行。
-5. ビルドが完了したらコマンド`docker-compose up -d`を実行しコンテナを立ち上げる。
+4. ビルドが完了したらコマンド`docker-compose up -d`を実行しコンテナを立ち上げる。
   - 上記手順で`ERROR: for proxy  Cannot start service proxy: Mounts denied:`が出力された場合
   - DockerアプリのPreferences > Resources > File sharing設定にプロジェクトディレクトリのパスを追加。
   - Apply & Restartボタンで再起動。
 ### コンテナ内での作業
-コンテナ名`devcontainer_php`コンテナに入る。
+
+以下のコマンドでphpコンテナに入ります。
+`${APP_NAME}`は.`.env`ファイル記載の`APP_NAME=アプリケーションを指定`
+`docker exec -it ${APP_NAME}-php bash`
+
 #### プロジェクトの作成
 1. 下記コマンドを実行し新規プロジェクトを作成する。
-  ```composer create-project laravel/laravel:^8.1 プロジェクト名 --prefer-dist```
+ `$APP_NAME`は`.devcontainer/.env`に記載してあるアプリケーション名を指定
+  `composer create-project laravel/laravel:^8.1 $APP_NAME --prefer-dist`
+
 2. 作成したプロジェクトに移動し`.env`ファイル内を`.devcontainer/.env`に基づいて下記値に変更する。
     ```
     APP_NAME=`.devcontainer/.env`に記載されているアプリ名
@@ -74,7 +87,7 @@
     DB_HOST=db
     DB_PORT=3306
     DB_DATABASE=`.devcontainer/.env`に記載されている接続先データベース
-    DB_USERNAME=root
+    DB_USERNAME=`.devcotainer/.env`に記載されているDBユーザー
     DB_PASSWORD=`.devcotainer/.env`に記載されているパスワード
     ```
 3. `http://127.0.0.1:8086`でPhpMyAdminにアクセスできるか確認します。

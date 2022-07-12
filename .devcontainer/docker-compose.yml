@@ -32,7 +32,7 @@ services:
     environment:
       - PMA_ARBITRARY=1
       - PMA_HOST=db
-      - PMA_USER=root
+      - PMA_USER=$DB_USER
       - PMA_PASSWORD=$DB_PASSWORD
     depends_on:
       - db
@@ -54,6 +54,6 @@ services:
     environment:
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: root
+      MYSQL_USER: ${DB_USER}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       TZ: Asia/Tokyo
