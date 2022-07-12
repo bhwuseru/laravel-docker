@@ -1,0 +1,43 @@
+FROM php:8.0-rc-fpm-buster
+
+COPY php.ini /usr/local/etc/php/php.ini
+
+# vim install
+RUN apt-get update
+
+# php module
+RUN apt-get update && apt-get install -y \
+    vim \
+    zlib1g-dev \
+    git \
+    libzip* \
+    libonig-dev \
+    libc-client-dev \
+    libkrb5-dev \
+    libzip-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libzip-dev \
+    libpq-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev
+
+RUN rm -r /var/lib/apt/lists/*
+RUN PHP_OPENSSL=yes
+RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
+
+RUN docker-php-ext-install zip pdo_mysql mysqli mbstring gd
+
+# composer install
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+# xdebug install
+RUN pecl install xdebug && \
+docker-php-ext-enable xdebug
+
+# npm install
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN apt-get install -y nodejs
+
+WORKDIR /var/www/html
