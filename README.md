@@ -42,6 +42,7 @@
 ## 必要条件とツールの導入
 [Docker の公式サイト](https://www.docker.com/)から手順に従って導入し`docker-compose`コマンドを利用できるようにします。<br>
 [docker-composeの詳細](https://docs.docker.com/compose/compose-file/)はリファレンスを参考にしてください。<br>
+[Dockerプラグイン](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)を導入してください。
 
 ## 環境構築手順
 ### Dockerインフラ構築
@@ -69,6 +70,14 @@
   - DockerアプリのPreferences > Resources > File sharing設定にプロジェクトディレクトリのパスを追加。
   - Apply & Restartボタンで再起動。
 ### コンテナ内での作業
+
+[Dockerプラグイン](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
+- 導入済みの場合
+エディタ画面左側にDocdkrのアイコンが表示されます。
+アイコンをクリックし最上段にある`CONTAINERS`をクリックします。
+コンテナリストが表示されサフィックスに`*-php`が表示されている箇所をクリックします。
+Attach Shellと表示されている箇所をクリックします。
+VSCodeにコンテナのターミナル画面が表示されます。
 
 以下のコマンドでphpコンテナに入ります。
 `${APP_NAME}`は.`.env`ファイル記載の`APP_NAME=アプリケーションを指定`
