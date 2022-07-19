@@ -1,9 +1,14 @@
 # 環境構築資料
 
 - [環境構築資料](#環境構築資料)
-  - [ファイル全体構成](#ファイル全体構成)
-  - [必要条件とツールの導入](#必要条件とツールの導入)
-  - [環境構築手順](#環境構築手順)
+  - [circleciの設定](#circleciの設定)
+    - [ファイル全体構成](#ファイル全体構成)
+  - [AWS環境構築手順](#aws環境構築手順)
+    - [AWSリソース構成](#awsリソース構成)
+    - [CloudFormationを利用したEC2環境構築手順](#cloudformationを利用したec2環境構築手順)
+  - [Docker開発環境構築手順](#docker開発環境構築手順)
+    - [Dockerファイル全体構成](#dockerファイル全体構成)
+    - [必要条件とツールの導入](#必要条件とツールの導入)
     - [Dockerインフラ構築](#dockerインフラ構築)
     - [コンテナ内での作業](#コンテナ内での作業)
       - [プロジェクトの作成](#プロジェクトの作成)
@@ -26,7 +31,26 @@
   - [チートシート](#チートシート)
   - [コンテナ削除などのコマンド](#コンテナ削除などのコマンド)
 
-## ファイル全体構成
+## circleciの設定
+PHP8・NodeJS、MySQLのcicrlecici公式提供のDocker最新イメージを利用すると自動テストが止まらない現象や他不具合が
+発生するため、後ほど調査予定。
+
+### ファイル全体構成 
+- .circleci/
+  - circleciで利用する。リソースが格納。
+
+## AWS環境構築手順
+
+### AWSリソース構成
+- aws/CloudFormation/
+  - CloudFormationで利用する。スタックのリソースが格納。
+
+### CloudFormationを利用したEC2環境構築手順
+`aws/CloudFormation/README.md`の手順に従い実施してください。
+
+## Docker開発環境構築手順
+
+### Dockerファイル全体構成
 
 - .devcontainer/
   - 開発環境で利用する`docker-compse`のリソースが格納。
@@ -38,13 +62,10 @@
   - `docker-compose build`で利用するnginxの設定が格納。
 - Makefile
   - 開発環境を構築する際に利用するコマンドが記載されています。
-
-## 必要条件とツールの導入
-[Docker の公式サイト](https://www.docker.com/)から手順に従って導入し`docker-compose`コマンドを利用できるようにします。<br>
-[docker-composeの詳細](https://docs.docker.com/compose/compose-file/)はリファレンスを参考にしてください。<br>
+### 必要条件とツールの導入
+[Docker の公式サイト](https://www.docker.com/)から手順に従って導入し`docker-compose`コマンドを利用できるようにします。
+[docker-composeの詳細](https://docs.docker.com/compose/compose-file/)はリファレンスを参考にしてください。
 [Dockerプラグイン](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)を導入してください。
-
-## 環境構築手順
 ### Dockerインフラ構築
 1. `.devcontainer`ディレクトリ下で`.env`ファイルを作成し`env.example`の内容をコピーします。
 2. 作成した`.env`ファイルを作成するアプリケーションに応じて編集します。
