@@ -107,7 +107,7 @@ VSCodeにコンテナのターミナル画面が表示されます。
 #### プロジェクトの作成
 1. 下記コマンドを実行し新規プロジェクトを作成する。
  `$APP_NAME`は`.devcontainer/.env`に記載してあるアプリケーション名を指定
-  `composer create-project laravel/laravel:^8.1 $APP_NAME --prefer-dist`
+  `composer create-project laravel/laravel:^8.* $APP_NAME --prefer-dist`
 
 2. 作成したプロジェクトに移動し`.env`ファイル内を`.devcontainer/.env`に基づいて下記値に変更する。
     ```

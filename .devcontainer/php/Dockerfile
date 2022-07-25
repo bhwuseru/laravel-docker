@@ -1,9 +1,7 @@
-FROM php:8.0-rc-fpm-buster
+FROM php:8.2-rc-fpm-buster
 
 COPY php.ini /usr/local/etc/php/php.ini
 
-# vim install
-RUN apt-get update
 
 # php module
 RUN apt-get update && apt-get install -y \
@@ -33,8 +31,8 @@ RUN docker-php-ext-install zip pdo_mysql mysqli mbstring gd
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # xdebug install
-RUN pecl install xdebug && \
-docker-php-ext-enable xdebug
+# RUN pecl install xdebug && \
+# docker-php-ext-enable xdebug
 
 # npm install
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
