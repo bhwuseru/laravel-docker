@@ -109,7 +109,9 @@ VSCodeにコンテナのターミナル画面が表示されます。
  `$PROJECT_NAME`は`.devcontainer/.env`に記載してあるアプリケーション名を指定
   `composer create-project laravel/laravel $PROJECT_NAME "8.*" --prefer-dist`
   - 警告: バージョンが不一致警告が出力された場合
-  `php --version`でバージョンを確認し`composer config platform.php バージョン番号`でバージョンを合わせる。
+    - `php --version`でバージョンを確認し`composer config platform.php バージョン番号`でバージョンを合わせる。
+    - `composer install`を実行する。
+    - `php artisan key:generate`を実行する。
 2. 作成したプロジェクトに移動し`.env`ファイル内を`.devcontainer/.env`に基づいて下記値に変更する。
     ```
     APP_NAME=`.devcontainer/.env`に記載されているアプリ名
