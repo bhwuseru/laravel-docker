@@ -1,0 +1,8 @@
+#!/bin/sh
+
+export PROJECT_ROOT=$(pwd)
+export PROJECT_NAME=
+export APP_NAME=
+export DB_DATABASE=
+export DB_PASSWORD=
+export DB_USER=
