@@ -1,5 +1,6 @@
 # FROM php:8.2-rc-fpm-buster
-FROM php:8.0.22RC1-fpm-buster
+# FROM php:8.0.22RC1-fpm-buster
+FROM php:7.4.30-fpm-buster
 
 # 引数を受け取ってコンテナ内で環境変数を定義
 ARG PROJECT_NAME
@@ -38,7 +39,7 @@ RUN pecl install xdebug && \
 docker-php-ext-enable xdebug
 
 # npm install
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y nodejs
 
 WORKDIR /var/www/html
