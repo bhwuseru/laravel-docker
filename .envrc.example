@@ -1,8 +1,12 @@
-#!/bin/sh
-
+# Dockerで利用する環境変数
 export PROJECT_ROOT=$(pwd)
 export PROJECT_NAME=
 export APP_NAME=
 export DB_DATABASE=
 export DB_USER=
 export DB_PASSWORD=
+
+# gitで利用する環境変数
+export PROJECT_NAME=
+export TOKEN=
+export USER_NAME=
