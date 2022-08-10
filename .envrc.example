@@ -5,8 +5,9 @@ export APP_NAME=
 export DB_DATABASE=
 export DB_USER=
 export DB_PASSWORD=
+export USER=
 
 # gitで利用する環境変数
-export PROJECT_NAME=
+export PROJECT_NAME_GIT=
 export TOKEN=
 export USER_NAME=

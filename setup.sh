@@ -17,6 +17,12 @@ if [ ! -f $INIT_SQLFILE_PATH ]; then
   rm -rf "$DB_DATA_PATH"
 fi
 
+# ディレクトリに.devcontainerが存在する場合はまだ１度もDockerがビルドされてない
+if [ -d .devcontainer ]; then
+  # ここでディレクトリ名を変更してコンテナ立上げ時にコンテナ名(docker-compose)を重複させないようにする
+  mv .devcontainer ".${PROJECT_NAME}"
+fi
+
 # docker-composeの.envファイルが存在しない場合は作成
 if [ ! -f $DOCKER_ENVFILE_PATH ]; then
   echo "PROJECT_NAME=${PROJECT_NAME}" > $DOCKER_ENVFILE_PATH
