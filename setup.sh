@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# .envrcファイルが存在しない場合は新規作成
+if [ ! -f .envrc ]; then
+  cat .envrc.example > .envrc
+fi
+
 source .envrc
 
 PROJECT_ROOT=$(pwd)
@@ -17,11 +22,6 @@ if [ ! -f $INIT_SQLFILE_PATH ]; then
   rm -rf "$DB_DATA_PATH"
 fi
 
-# ディレクトリに.devcontainerが存在する場合はまだ１度もDockerがビルドされてない
-if [ -d .devcontainer ]; then
-  # ここでディレクトリ名を変更してコンテナ立上げ時にコンテナ名(docker-compose)を重複させないようにする
-  mv .devcontainer ".${PROJECT_NAME}"
-fi
 
 # docker-composeの.envファイルが存在しない場合は作成
 if [ ! -f $DOCKER_ENVFILE_PATH ]; then
@@ -30,4 +30,8 @@ if [ ! -f $DOCKER_ENVFILE_PATH ]; then
   echo "DB_DATABASE=${DB_DATABASE}" >> $DOCKER_ENVFILE_PATH
   echo "DB_USER=${DB_USER}" >> $DOCKER_ENVFILE_PATH
   echo "DB_PASSWORD=${DB_PASSWORD}" >> $DOCKER_ENVFILE_PATH
+  echo "PROXY_PORT=${PROXY_PORT}" >> $DOCKER_ENVFILE_PATH
+  echo "BACKEND_PORT=${BACKEND_PORT}" >> $DOCKER_ENVFILE_PATH
+  echo "FRONTEND_PORT=${FRONTEND_PORT}" >> $DOCKER_ENVFILE_PATH
+  echo "PHP_MYADMIN_PORT=${PHP_MYADMIN_PORT}" >> $DOCKER_ENVFILE_PATH
 fi

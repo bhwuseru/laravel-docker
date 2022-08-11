@@ -6,6 +6,10 @@ export DB_DATABASE=
 export DB_USER=
 export DB_PASSWORD=
 export USER=
+export PROXY_PORT=
+export BACKEND_PORT=
+export FRONTEND_PORT=
+export PHP_MYADMIN_PORT=
 
 # gitで利用する環境変数
 export PROJECT_NAME_GIT=
