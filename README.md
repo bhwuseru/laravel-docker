@@ -16,6 +16,7 @@
       - [Stripeの設定](#stripeの設定)
       - [Mailtrapの設定](#mailtrapの設定)
     - [各ライブラリの導入手順](#各ライブラリの導入手順)
+      - [Laravel Sanctum](#laravel-sanctum)
       - [Laraval Breeze](#laraval-breeze)
       - [AdminLTE3](#adminlte3)
       - [Jetstream](#jetstream)
@@ -163,6 +164,40 @@ VSCodeにコンテナのターミナル画面が表示されます。
 
 ### 各ライブラリの導入手順
 下記を参考に実施する。
+
+#### Laravel Sanctum
+1. 以下のコマンドを実行する。
+  ```
+    composer require laravel/sanctum
+    php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+    php artisan migrate:fresh
+  ```
+
+2. `Kernel.php`ファイルの以下の記載部分を変更する。
+   ```
+    'api' => [
+        \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        // 'throttle:api',
+        // \Illuminate\Routing\Middleware\SubstituteBindings::class,
+    ],
+   ```
+3. `config/sanctum.php`ファイルの以下を自身の環境に合わせ変更する。
+    ```
+      'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
+          '%s%s',
+          'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
+          env('APP_URL') ? ','.parse_url(env('APP_URL'), PHP_URL_HOST) : ''
+      ))),
+    ```
+
+以下参考URL
+- [Sanctum](https://laravel.com/docs/9.x/sanctum)
+- [認証](https://laravel.com/docs/9.x/authentication)
+
+- **ログイン時にステータスコード500が送出される場合は以下の記事を参考にする**。
+  [ログイン認証エラー ステータスコード(500)の対処](https://laracasts.com/discuss/channels/laravel/sanctum-throws-session-store-not-set-on-request)
+
 #### Laraval Breeze
 - [参考1](https://reffect.co.jp/laravel/laravel8-breeze#Laravel_Breeze)
 1. `composer require laravel/breeze --dev`
