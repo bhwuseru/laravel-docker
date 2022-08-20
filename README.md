@@ -24,11 +24,8 @@
         - [Jetstreamの設定](#jetstreamの設定)
   - [VScodeの設定](#vscodeの設定)
     - [Xdebug設定](#xdebug設定)
-  - [開発環境URLのアクセス法](#開発環境urlのアクセス法)
-  - [その他TIPS](#その他tips)
-    - [artisan コマンド](#artisan-コマンド)
-  - [ダミーデータの作成方法](#ダミーデータの作成方法)
-  - [フォーム画面注意点](#フォーム画面注意点)
+- [フォームリクエスト等も同時に作成する場合(ver 8.7.0以降)](#フォームリクエスト等も同時に作成する場合ver-870以降)
+- [フォームリクエスト等も同時に作成する場合](#フォームリクエスト等も同時に作成する場合)
   - [チートシート](#チートシート)
   - [コンテナ削除などのコマンド](#コンテナ削除などのコマンド)
 
@@ -248,18 +245,36 @@ php artisan vendor:publish --tag=jetstream-views
 
 ## VScodeの設定
 ### Xdebug設定
-`.vscode/launch.json`の設定を下記項目に変更する。
+1. LaravelプロジェクトディレクトリをVSCodeで開く。
+2. `web.php`のルートに以下を追加する。
+    ```
+      Route::get('/phpinfo', function(){
+          phpinfo();
+    });
+    ```
+3. 以下コマンドを実行し `GET|HEAD  | phpinfo`が追加されているか確認。
+    ```
+    php artisan route:clear
+    php artisan route:list | grep phpinfo
+    ```
 
+4. 上記のルートで設定した[URL](`http://127.0.0.1/phpinfo`)にアクセスする。
+   `xdebug.client_port`を検索。ポート番号をコピーする。
+5. 画面右側のデバッグアイコンをクリック、実行とデバッグ`.vscode/launch.json`を作成する。
+6. `.vscode/launch.json`の設定を下記項目に変更する。
+	```
     "configurations": [
-        {
+          {
             "name": "Listen for Xdebug",
             "type": "php",
             "request": "launch",
-            "port": 9013,
+            "port": コピーしたポート番号,
             "pathMappings": {
-                "/var/www/html": "${workspaceRoot}/php"
+                "nginxで設定されているドメインルート": "${workspaceRoot}"
             }
         },
+    ```
+
 ## 開発環境URLのアクセス法
 
 1. コンテナが起動していない場合はコマンド `cd .devcontainer`で移動し`docker-compose  up -d`を実行。
