@@ -71,6 +71,7 @@ PHP8・NodeJS、MySQLのcicrlecici公式提供のDocker最新イメージを利�
 
 1. 作成した`.env`ファイルを作成するアプリケーションに応じて編集します。
     ```
+    PROJECT_NAME=プロジェクト名
     APP_NAME=アプリケーション名
     DB_DATABASE=データベース名
     DB_USER=データベースユーザー名
@@ -89,6 +90,14 @@ PHP8・NodeJS、MySQLのcicrlecici公式提供のDocker最新イメージを利�
       `$APP_NAME`は.`.env`ファイル記載の`APP_NAME=アプリケーションを指定`
       ```
       root   /var/www/html/`$APP_NAME`/public;
+      ```
+      **補足**
+      上記のrootパスとlaravelプロジェクトを作成するコンテナのパスが一致することを確認してください。
+      ```
+      # server.confのルートパス定義
+      root   /var/www/html/laravel_project/public;
+      # phpコンテナ内のlaravelプロジェクトのパス
+      /var/www/html/laravel_project/public;
       ```
 
 2. `/.devcontainer`ディレクトリに移動し`docker-compose build`を実行。
@@ -129,7 +138,7 @@ VSCodeにコンテナのターミナル画面が表示されます。
     DB_USERNAME=`.devcotainer/.env`に記載されているDBユーザー
     DB_PASSWORD=`.devcotainer/.env`に記載されているパスワード
     ```
-3. `http://127.0.0.1:8086`でPhpMyAdminにアクセスできるか確認します。
+3. `http://127.0.0.1:{.devcontainer/.env記載のPhpMyAdminのポート}`でPhpMyAdminにアクセスできるか確認します。
 4. Gitからクローンした場合(プロジェクト新規作成の場合は不要)
     プロジェクトディレクトリ内で```composer install```を実行。
 5.  下記コマンドを実行しマイグレーション・データを作成
@@ -238,7 +247,7 @@ php artisan vendor:publish --tag=jetstream-views
     # ストレージリンクを貼る
     php artisan storage:link
     ```
-5. `.env`ファイルの項目を`APP_URL=http://localhost:8085`に変更する。
+5. `.env`ファイルの項目を`APP_URL=http://localhost:{サーバーのポート}`に変更する。
 7. ```php artisan config:clear```でキャッシュをクリア。
 8. `php artisan migrate:fresh`でDBに反映させる。
 

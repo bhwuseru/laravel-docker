@@ -1,6 +1,6 @@
 # FROM php:8.2-rc-fpm-buster
-FROM php:8.0.22RC1-fpm-buster
-# FROM php:7.4.30-fpm-buster
+# FROM php:8.0.22RC1-fpm-buster
+FROM php:7.4.30-fpm-buster
 
 # 引数を受け取ってコンテナ内で環境変数を定義
 ARG PROJECT_NAME
