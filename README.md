@@ -115,7 +115,6 @@ PHP8・NodeJS、MySQLのcicrlecici公式提供のDocker最新イメージを利�
       ```
 
 3. `/.devcontainer`ディレクトリに移動し`docker-compose up -d --build`を実行。
-~~3. ビルドが完了したらコマンド`docker-compose up -d`を実行しコンテナを立ち上げる。~~
   - 上記手順で`ERROR: for proxy  Cannot start service proxy: Mounts denied:`が出力された場合
   - DockerアプリのPreferences > Resources > File sharing設定にプロジェクトディレクトリのパスを追加。
   - Apply & Restartボタンで再起動。
