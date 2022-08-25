@@ -65,11 +65,25 @@ PHP8・NodeJS、MySQLのcicrlecici公式提供のDocker最新イメージを利�
 [docker-composeの詳細](https://docs.docker.com/compose/compose-file/)はリファレンスを参考にしてください。
 [Dockerプラグイン](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)を導入してください。
 ### Dockerインフラ構築
-1. `.devcontainer`ディレクトリ下で`.env`ファイルを作成し`env.example`の内容をコピーします。
-**複数コンテナを稼働させる場合**
-ルートディレクトリ下の`.devcontainer`ディレクトリ名を任意の名前(コンテナ名を重複させないため)に変更する。
+- **複数コンテナを稼働させる場合**
+  1. ルートディレクトリ下の`.devcontainer`ディレクトリ名を任意の名前変更。
+  上記のディレクトリ名がcomposeのコンテナ名になるので複数立ち上げる場合は重複させないようにディレクトリ名を変更する。
+- **起動しなくなった場合**
+  1. `.devcontainer/`下で `docker-compose down --rmi all --volumes`を実行。 
+  2. `.devcontainer/db/data`ディレクトリ(存在する場合は)削除
+  3. Docker本体を再起動。
+  4. `.devcontainer/`下で`docker-compose up -d --build`を実行。
 
-1. 作成した`.env`ファイルを作成するアプリケーションに応じて編集します。
+- **コンテナ立ち上げ後に`.devcotainer/.env`を編集した場合**
+  1. 画面左の[Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)パネルをクリック。
+  2. 対象のコンテナをクリックしCompose Downを実行。
+  3. `docker-compose up -d --build`を実行。
+
+
+1. `.devcontainer`ディレクトリ下で`.env`ファイルを作成し`env.example`の内容をコピーします。
+2. 作成した`.env`ファイルを作成するアプリケーションに応じて編集します。
+    - **複数環境を立ち上げる場合は.envファイル内のポートを変更。**
+    - DB_PORT、PHP_MYADMIN_PORT、PROXY_PORTは重複しないように変更する。
     ```
     PROJECT_NAME=プロジェクト名
     APP_NAME=アプリケーション名
@@ -78,30 +92,30 @@ PHP8・NodeJS、MySQLのcicrlecici公式提供のDocker最新イメージを利�
     DB_PASSWORD=パスワード
     USER=バックエンドのユーザー名
     PROXY_PORT=Webサーバーのポート番号
+    PHP_MYADMIN_PORT=PhpMyAdminのポート番号
+    DB_PORT=データベースのポート番号
     BACKEND_PORT=バックエンドのポート番号
     FRONTEND_PORT=フロントエンドのポート番号
-    PHP_MYADMIN_PORT=PhpMyAdminのポート番号
     ```
     編集が完了したら`.devcontainer/db/init/init.sql`を新規作成します。
     - `init.sql`ファイル内に下記内容を追記します。
     `CREATE DATABASE IF NOT EXISTS .envファイル追記したデータベース名 CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;`
 
-    - `.devcontainer/proxy/server.conf`ファイルの以下項目を変更します.
-      `$APP_NAME`は.`.env`ファイル記載の`APP_NAME=アプリケーションを指定`
-      ```
-      root   /var/www/html/`$APP_NAME`/public;
-      ```
+     ~~`.devcontainer/proxy/server.conf`ファイルの以下項目を変更します.~~
+      ~~`$APP_NAME`は.`.env`ファイル記載の`APP_NAME=アプリケーションを指定`~~
+      ~~```root   /var/www/html/`$APP_NAME`/public;```~~
       **補足**
-      上記のrootパスとlaravelプロジェクトを作成するコンテナのパスが一致することを確認してください。
+      `default.conf.template`のrootパスとlaravelプロジェクトを作成するコンテナのパスが一致することを確認してください。
+      $PROJECT_NAMEは.devcontainer/.env記載の環境変数
       ```
-      # server.confのルートパス定義
-      root   /var/www/html/laravel_project/public;
+      # default.conf.templateのルートパス定義
+      root   /var/www/html/${PROJECT_NAME}/public;
       # phpコンテナ内のlaravelプロジェクトのパス
-      /var/www/html/laravel_project/public;
+      /var/www/html/${PROJECT_NAME}/public;
       ```
 
-2. `/.devcontainer`ディレクトリに移動し`docker-compose build`を実行。
-3. ビルドが完了したらコマンド`docker-compose up -d`を実行しコンテナを立ち上げる。
+3. `/.devcontainer`ディレクトリに移動し`docker-compose up -d --build`を実行。
+~~3. ビルドが完了したらコマンド`docker-compose up -d`を実行しコンテナを立ち上げる。~~
   - 上記手順で`ERROR: for proxy  Cannot start service proxy: Mounts denied:`が出力された場合
   - DockerアプリのPreferences > Resources > File sharing設定にプロジェクトディレクトリのパスを追加。
   - Apply & Restartボタンで再起動。
@@ -115,9 +129,9 @@ PHP8・NodeJS、MySQLのcicrlecici公式提供のDocker最新イメージを利�
 Attach Shellと表示されている箇所をクリックします。
 VSCodeにコンテナのターミナル画面が表示されます。
 
-以下のコマンドでphpコンテナに入ります。
-`${APP_NAME}`は.`.env`ファイル記載の`APP_NAME=アプリケーションを指定`
-`docker exec -it ${APP_NAME}-php bash`
+~~以下のコマンドでphpコンテナに入ります。~~
+~~`${APP_NAME}`は.`.env`ファイル記載の`APP_NAME=アプリケーションを指定`~~
+~~`docker exec -it ${APP_NAME}-php bash`~~
 
 #### プロジェクトの作成
 1. 下記コマンドを実行し新規プロジェクトを作成する。
