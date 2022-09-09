@@ -1,5 +1,6 @@
 php/
 .envrc
+.env
 configurationCache.log
 dryrun.log
 targets.log

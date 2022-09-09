@@ -1,18 +1,23 @@
-# Dockerで利用する環境変数
+## Dockerで利用する環境変数 ##
 export PROJECT_ROOT=$(pwd)
-export PROJECT_NAME=
-export APP_NAME=
-export DB_DATABASE=
-export DB_USER=
-export DB_PASSWORD=
-export USER=
-export PROXY_PORT=
-export BACKEND_PORT=
-export DB_PORT=
-export FRONTEND_PORT=
-export PHP_MYADMIN_PORT=
+export PROJECT_NAME=smalog
+export APP_NAME=smalog
+export DB_DATABASE=smalog_db
+export DB_USER=user
+export DB_PASSWORD=password
+export USER=user
+export PROXY_PORT=8090
+export DB_PORT=43306
+export PHP_MYADMIN_PORT=8091
 
-# gitで利用する環境変数
-export PROJECT_NAME_GIT=
-export TOKEN=
-export USER_NAME=
+## ↓現時点では利用用途なし
+export BACKEND_PORT=
+export FRONTEND_PORT=
+
+## gitセットアップスクリプトで利用する環境変数 ##
+# レポジトリ
+export GIT_REPOSITORY=
+# トークン
+export GIT_TOKEN=
+# ユーザー名
+export GIT_USER=
