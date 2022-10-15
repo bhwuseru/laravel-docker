@@ -3,13 +3,16 @@ FROM php:8.0.22RC1-fpm-buster
 # FROM php:7.4.30-fpm-buster
 
 # 引数を受け取ってコンテナ内で環境変数を定義
+ARG LARAVEL_VERSION
 ARG PROJECT_NAME
 ARG PASSWORD
 ARG USER
+ENV LARAVEL_VERSION=${LARAVEL_VERSION}
 ENV PROJECT_NAME=${PROJECT_NAME}
 ENV PASSWORD=${PASSWORD}
 ENV USER=${USER}
 
+# ローカルからDocker環境にファイルをコピー
 COPY php.ini /usr/local/etc/php/php.ini
 
 # php module
@@ -58,5 +61,3 @@ USER ${USER}
 
 #　作業ディレクトリに移動
 WORKDIR /var/www/html
-
-
