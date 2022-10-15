@@ -1,4 +1,5 @@
 ## Dockerで利用する環境変数 ##
+LARAVEL_VERSION='8.*'
 export PROJECT_ROOT=$(pwd)
 export PROJECT_NAME=smalog
 export APP_NAME=smalog
@@ -9,6 +10,9 @@ export USER=user
 export PROXY_PORT=8090
 export DB_PORT=43306
 export PHP_MYADMIN_PORT=8091
+# 128Mの形式で指定する
+export MEMORY_LIMIT=128M
+export UPLOAD_LIMIT=64M
 
 ## ↓現時点では利用用途なし
 export BACKEND_PORT=
