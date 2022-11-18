@@ -131,6 +131,11 @@ php artisan vendor:publish --tag=jetstream-views
     php artisan make:middleware Cors 
   ```
 
+- カスタムバリデーション
+  ```
+    php artisan make:rule {ルール名}
+  ```
+
 - キャッシュをクリア 
   ```
   php artisan cache:clear
