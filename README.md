@@ -125,7 +125,7 @@ VSCodeにコンテナのターミナル画面が表示されます。
 #### プロジェクトの作成
 1. 下記コマンドを実行し新規プロジェクトを作成する。
  `$PROJECT_NAME`は`.devcontainer/.env`に記載してあるアプリケーション名を指定
-  `composer create-project laravel/laravel $PROJECT_NAME "8.*" --prefer-dist`
+  `composer create-project laravel/laravel $PROJECT_NAME $LARAVEL_VERSION --prefer-dist`
   - 警告: バージョンが不一致警告が出力された場合
     - `php --version`でバージョンを確認し`composer config platform.php バージョン番号`でバージョンを合わせる。
     - `composer install`を実行する。

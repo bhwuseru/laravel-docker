@@ -1,5 +1,5 @@
 ## Dockerで利用する環境変数 ##
-LARAVEL_VERSION='8.*'
+export LARAVEL_VERSION='9.*'
 export PROJECT_ROOT=$(pwd)
 export PROJECT_NAME=smalog
 export APP_NAME=smalog
