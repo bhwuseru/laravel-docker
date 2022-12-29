@@ -13,10 +13,24 @@ fi
 source .envrc
 
 PROJECT_ROOT=$(pwd)
-INIT_DIR_PATH="${PROJECT_ROOT}/.devcontainer/db/init"
-INIT_SQLFILE_PATH="${INIT_DIR_PATH}/init.sql"
-DOCKER_ENVFILE_PATH="${PROJECT_ROOT}/.devcontainer/.env"
-DB_DATA_PATH="${PROJECT_ROOT}/.devcontainer/db/data"
+# このディレクトリパス以下がdocker-composeの資材置き場
+DEVCONTAINER_DIR_PATH="${PROJECT_ROOT}/.devcontainer"
+
+# .devcontainerが存在しない場合は既に初期化処理を実行済み
+if [ -d "$DEVCONTAINER_DIR_PATH" ]; then
+	mv "$DEVCONTAINER_DIR_PATH" "${PROJECT_ROOT}/.${PROJECT_NAME}"
+  DEVCONTAINER_DIR_PATH="${PROJECT_ROOT}/.${PROJECT_NAME}"
+fi
+
+INIT_DB_PATH="${DEVCONTAINER_DIR_PATH}/db/init"
+INIT_SQLFILE_PATH="${INIT_DB_PATH}/init.sql"
+DOCKER_ENVFILE_PATH="${DEVCONTAINER_DIR_PATH}/.env"
+DB_DATA_PATH="${DEVCONTAINER_DIR_PATH}/db/data"
+
+# db/initディレクトリ作成
+if [ ! -d INIT_DB_PATH ]; then
+  mkdir "$INIT_DB_PATH"
+fi
 
 # docker-composeの.envファイルが存在しない場合は作成
 if [ ! -f $DOCKER_ENVFILE_PATH ]; then
