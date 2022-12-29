@@ -34,7 +34,7 @@ RUN apt-get update && apt-get install -y \
     libpng-dev
 
 # nodejs 追加
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install -y nodejs
 
 RUN rm -r /var/lib/apt/lists/*
@@ -49,7 +49,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # xdebug インストール
 RUN pecl install xdebug && \
-docker-php-ext-enable xdebug
+    docker-php-ext-enable xdebug
 
 # 一般権限のユーザーを追加
 RUN useradd -m ${USER} --uid 1000
