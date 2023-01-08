@@ -15,15 +15,10 @@ export USER=user
 export MEMORY_LIMIT=128M
 export UPLOAD_LIMIT=64M
 
-# docker-compose.yml: ローカル環境側とdockerのポート設定
 # PhpMyadmin servic 公開側ポート
 export PHP_MYADMIN_PUBLIC_PORT=
 # proxy service 公開側ポート
 export PROXY_PUBLIC_PORT=
-# php service 公開側ポート
-export PHP_PUBLIC_PORT=
-# php service docker側ポート
-export PHP_DOCKER_PORT=
 
 ## gitセットアップスクリプトで利用する環境変数 ##
 # レポジトリ
