@@ -1,55 +1,47 @@
-# FROM php:8.2-rc-fpm-buster
-FROM php:8.0.22RC1-fpm-buster
-# FROM php:7.4.30-fpm-buster
+FROM  php:8.2-fpm
 
 # 引数を受け取ってコンテナ内で環境変数を定義
+ARG NODEJS_VERSION
 ARG LARAVEL_VERSION
 ARG PROJECT_NAME
 ARG PASSWORD
 ARG USER
+ARG PHP_DOCKER_PORT
+
 ENV LARAVEL_VERSION=${LARAVEL_VERSION}
+ENV NODEJS_VERSION=${NODEJS_VERSION}
 ENV PROJECT_NAME=${PROJECT_NAME}
-ENV PASSWORD=${PASSWORD}
 ENV USER=${USER}
+ENV PASSWORD=${PASSWORD}
+ENV PHP_DOCKER_PORT=${PHP_DOCKER_PORT}
+
+# タイムゾーンを設定
+ENV TZ=Asia/Tokyo
 
 # ローカルからDocker環境にファイルをコピー
 COPY php.ini /usr/local/etc/php/php.ini
 
-# php module
+# composerのインストール
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# パッケージのインストール
 RUN apt-get update && apt-get install -y \
-    vim \
-    zlib1g-dev \
-    git \
-    libzip* \
-    libonig-dev \
-    libc-client-dev \
-    libkrb5-dev \
-    libzip-dev \
-    libjpeg-dev \
-    libpng-dev \
-    libzip-dev \
-    libpq-dev \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libpng-dev
+    tzdata \
+    zip \
+    unzip \
+    libonig-dev libfreetype6-dev libjpeg62-turbo-dev \
+    && pecl install xdebug \
+    && docker-php-ext-install pdo_mysql \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN PHP_OPENSSL=yes
 
 # nodejs 追加
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_${NODEJS_VERSION} | bash -
 RUN apt-get install -y nodejs
 
-RUN rm -r /var/lib/apt/lists/*
-
-# docker php設定
-RUN PHP_OPENSSL=yes
-RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
-RUN docker-php-ext-install zip pdo_mysql mysqli mbstring gd
-
-# composer追加
-COPY --from=composer /usr/bin/composer /usr/bin/composer
-
-# xdebug インストール
-RUN pecl install xdebug && \
-    docker-php-ext-enable xdebug
+# npm 経由でyarnをインストール
+RUN npm install -g yarn
 
 # 一般権限のユーザーを追加
 RUN useradd -m ${USER} --uid 1000
