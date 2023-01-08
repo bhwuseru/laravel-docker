@@ -13,6 +13,7 @@
     - [Dockerインフラ構築](#dockerインフラ構築)
     - [コンテナ内での作業](#コンテナ内での作業)
     - [プロジェクトの作成とLaravel環境設定](#プロジェクトの作成とlaravel環境設定)
+  - [Vite設定](#vite設定)
   - [開発環境URLアクセス法](#開発環境urlアクセス法)
   - [Dockerコマンド](#dockerコマンド)
 
@@ -97,8 +98,6 @@ PHP8・NodeJS、MySQLのcicrlecici公式提供のDocker最新イメージを利�
     PHP_MYADMIN_PUBLIC_PORT= # PhpMyAdmin: ブラウザからアクセスするポート番号
     MEMORY_LIMIT=128M # sqlファイルのPhpMyAdminファイルのアップロードサイズ
     UPLOAD_LIMIT=64M #　sqlファイルPhpMyAdminアップロードサイズ
-    PHP_PUBLIC_PORT= # php artisan seaveのブラウザからアクセスするポート番号
-    PHP_DOCKER_PORT= # php artisan seaveのdocker内のポート番号
     ```
     
     編集が完了したら`.devcontainer/db/init/init.sql`を新規作成します。
@@ -168,6 +167,46 @@ VSCodeにコンテナのターミナル画面が表示されます。
 プロジェクトディレクトリ内で`composer install`を実行。
 4. 下記コマンドを実行しマイグレーション・データを作成
 `php artisan migrate --seed`
+
+## Vite設定
+- `welcome.blade.php`に以下を追加
+```
+<!DOCTYPE html>
+<html ...>
+    <head>
+        {{-- ... --}}
+        # 下記を追加する 
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    </head>
+```
+
+- vite.config.jsまたはvite.config.tsをを以下を参考に編集する。
+```
+## vite.config.jsの設定
+import { defineConfig } from "vite";
+import laravel from "laravel-vite-plugin";
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            // パス設定
+            input: ["resources/css/app.css", "resources/js/app.js"],
+            refresh: true,
+        }),
+    ],
+    server: {
+        host: true, // trueにすると host 0.0.0.0
+        // ホットリロードHMRとlocalhost: マッピング
+        hmr: { 
+            host: "localhost", 
+        },
+        // ポーリングモードで動作 wsl2の場合これを有効しないとホットリロード反映しない
+        watch: {
+            usePolling: true,
+        },
+    },
+});
+```
 
 ## 開発環境URLアクセス法
 
