@@ -58,3 +58,6 @@ fi
 # sqlファイル作成
 echo "CREATE DATABASE IF NOT EXISTS ${DB_DATABASE} CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;" > $INIT_SQLFILE_PATH
 rm -rf "$DB_DATA_PATH"
+
+# test用sqlファイル作成
+echo "CREATE DATABASE IF NOT EXISTS ${DB_DATABASE}_testing CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;" > $INIT_SQLFILE_PATH
