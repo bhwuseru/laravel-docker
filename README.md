@@ -14,6 +14,7 @@
     - [コンテナ内での作業](#コンテナ内での作業)
     - [プロジェクトの作成とLaravel環境設定](#プロジェクトの作成とlaravel環境設定)
   - [Vite設定](#vite設定)
+  - [テスト開発環境設定とDB設定](#テスト開発環境設定とdb設定)
   - [開発環境URLアクセス法](#開発環境urlアクセス法)
   - [Dockerコマンド](#dockerコマンド)
 
@@ -206,6 +207,96 @@ export default defineConfig({
         },
     },
 });
+```
+
+## テスト開発環境設定とDB設定
+***.env_testingを作成***
+ `cp .env .env_testing`
+  .env_testingファイル下記内容を変更
+ `cp .env .env_testing`ファイルを作成
+ .env_testingの下記を変更または追加
+    ```php
+    APP_ENV=test
+    # dbは追加
+    DB_TESTING_CONNECTION=mysql_testing
+    DB_TESTING_HOST=ahr_db_testing
+    DB_TESTING_PORT=3306
+    DB_TESTING_DATABASE=test_ahr_db
+    DB_TESTING_USERNAME=user
+    DB_TESTING_PASSWORD=password
+    ```
+
+***database.phpを編集***
+    
+    ```php
+    // mysqlの配列をコピーして貼り付け下記部分を変更
+    'mysql_testing' => [　　　　名前変更
+       'database' => 'test_db名',             変更点
+    ],
+    ```
+    
+****phpunitファイルの編集****
+    
+    phpunitを実行する際に使用するデータベースを設定。
+    
+    ```xml
+    <php>
+    <server name="APP_ENV" value="testing"/>
+    <server name="BCRYPT_ROUNDS" value="4"/>
+    <server name="CACHE_DRIVER" value="array"/>
+    <server name="MAIL_MAILER" value="array"/>
+    <server name="QUEUE_CONNECTION" value="sync"/>
+    <server name="SESSION_DRIVER" value="array"/>
+    <server name="TELESCOPE_ENABLED" value="false"/>
+    <server name="DB_CONNECTION" value="mysql_testing"/>      変更点
+    <server name="DB_DATABASE" value="test_db名"/>       変更点
+    <server name="DB_HOST" value="127.0.0.1"/>
+    </php>
+    ```
+    
+***テスト用データベースを正しく使用できるか確認***
+`php artisan migrate --env=testing`
+
+    aravelにはデフォルトでuserのfactoryが用意されていて、seederも実行できる状態。
+
+    テスト用dbにseederを実行して値が反映されているか確認。
+
+****テストファイルの編集****
+
+データベースと繋がっているのか確認。
+
+```php
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+use App\User;
+use App\Item;
+
+class ExampleTest extends TestCase
+{
+	use RefreshDatabase;
+	
+	public function setUp(): void
+	{
+		dd(env('APP_ENV'), env('DB_DATABASE'), env('DB_CONNECTION'));
+	}
+}
+```
+
+下記のコマンドを実行します。
+
+```php
+php artisan config:clear　　キャッシュ消してから
+
+vendor/bin/phpunit
+
+ファイル指定で実行したい場合は下記のコマンドで出来ます。
+
+vendor/bin/phpunit tests/Feature/ExampleTest.php
 ```
 
 ## 開発環境URLアクセス法
