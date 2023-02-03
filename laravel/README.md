@@ -47,29 +47,125 @@
 
 ### Laravel Sanctum
 1. 以下のコマンドを実行する。
-  ```
-    composer require laravel/sanctum
-    php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
-    php artisan migrate:fresh
-  ```
+```
+  composer require laravel/sanctum
+  php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+  php artisan migrate:fresh
+```
 
 2. `Kernel.php`ファイルの以下の記載部分を変更する。
-   ```
-    'api' => [
-        \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-        \Illuminate\Session\Middleware\StartSession::class,
-        // 'throttle:api',
-        // \Illuminate\Routing\Middleware\SubstituteBindings::class,
-    ],
-   ```
+```
+'api' => [
+    \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+    \Illuminate\Session\Middleware\StartSession::class,
+    // 'throttle:api',
+    // \Illuminate\Routing\Middleware\SubstituteBindings::class,
+],
+```
+
 3. `config/sanctum.php`ファイルの以下を自身の環境に合わせ変更する。
-    ```
-      'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-          '%s%s',
-          'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
-          env('APP_URL') ? ','.parse_url(env('APP_URL'), PHP_URL_HOST) : ''
-      ))),
-    ```
+```
+  'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
+      '%s%s',
+      'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
+      env('APP_URL') ? ','.parse_url(env('APP_URL'), PHP_URL_HOST) : ''
+  ))),
+```
+
+4. 任意のコントローラーを作成して以下の内容を追加する。
+```
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
+// ↓コントローラー・メソッドなどは任意の名前
+class AuthController extends Controller
+{
+
+  /**
+  * @param  Request  $request
+  * @return \Illuminate\Http\JsonResponse
+  */
+  public function login(Request $request)
+  {
+      $credentials = $request->validate([
+          'email' => ['required', 'email'],
+          'password' => ['required'],
+      ]);
+
+      if (Auth::attempt($credentials)) {
+          $request->session()->regenerate();
+
+          return response()->json(Auth::user());
+      }
+      return response()->json([], 401);
+  }
+
+  /**
+  * @param  Request  $request
+  * @return \Illuminate\Http\JsonResponse
+  */
+  public function logout(Request $request)
+  {
+      Auth::logout();
+
+      $request->session()->invalidate();
+
+      $request->session()->regenerateToken();
+
+      return response()->json(true);
+  }
+
+
+  public function register(Request $request)
+  {
+      $validatedData = $request->validate([
+          'name' => 'required|string|max:255',
+          'email' => 'required|string|email|max:255|unique:users',
+          'password' => 'required|string|min:8',
+      ]);
+
+      $user = User::create([
+          'name' => $validatedData['name'],
+          'email' => $validatedData['email'],
+          'password' => Hash::make($validatedData['password']),
+      ]);
+
+      $token = $user->createToken('auth_token')->plainTextToken;
+
+      return response()->json([
+          'access_token' => $token,
+          'token_type' => 'Bearer',
+      ]);
+  }
+}
+```
+
+5. api.phpに以下を追記する
+
+```
+// routes/api.php
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout']);
+// 下はテスト用
+Route::get('/test', function(){
+return response()->json([
+    'test' => 'ok',
+],200);
+});
+
+Route::middleware('auth:sanctum')->get('/user', function () {
+return User::all();
+});
+```
+
+6. `php artisan route:clear`を実行
+
 
 以下参考URL
 - [Sanctum](https://laravel.com/docs/9.x/sanctum)
@@ -182,7 +278,7 @@ php artisan vendor:publish --tag=jetstream-views
             ]);
         }
       ```
-  4. `php artisan migrate:fresh --seed`を実行
+  4. `php artisan migrate:fresh --seed`を実行。
 
 - ダミーデータ作成
   - [ダミーデータ一覧参照](https://qiita.com/tosite0345/items/1d47961947a6770053af)
