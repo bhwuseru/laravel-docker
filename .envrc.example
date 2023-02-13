@@ -19,6 +19,8 @@ export UPLOAD_LIMIT=64M
 export PHP_MYADMIN_PUBLIC_PORT=
 # proxy service 公開側ポート
 export PROXY_PUBLIC_PORT=
+# viteのポート
+export VITE_PORT=
 
 ## gitセットアップスクリプトで利用する環境変数 ##
 # レポジトリ

@@ -30,7 +30,7 @@ services:
         PASSWORD: ${DB_PASSWORD}
     container_name: ${APP_NAME}-php
     ports:
-      - 5173:5173
+      - ${VITE_PORT}:5173
     depends_on:
       - db
     volumes:
