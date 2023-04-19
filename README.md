@@ -208,6 +208,8 @@ export default defineConfig({
     },
 });
 ```
+- 下記コマンドを実行する
+- `npm run dev -- --host`
 
 ## テスト開発環境設定とDB設定
 ***.env_testingを作成***
