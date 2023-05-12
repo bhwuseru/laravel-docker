@@ -30,7 +30,7 @@ services:
         USER: ${USER}
         PASSWORD: ${DB_PASSWORD}
     container_name: ${APP_NAME}-php
-    ports:
+    # ports:
       # - ${VITE_PORT}:5173
     depends_on:
       - db
