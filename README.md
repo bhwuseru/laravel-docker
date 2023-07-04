@@ -2,11 +2,6 @@
 
 - [環境構築資料](#環境構築資料)
   - [Laravelのライブラリ導入とコマンド一覧](#laravelのライブラリ導入とコマンド一覧)
-  - [circleciの設定](#circleciの設定)
-    - [ファイル全体構成](#ファイル全体構成)
-  - [AWS環境構築手順](#aws環境構築手順)
-    - [AWSリソース構成](#awsリソース構成)
-    - [CloudFormationを利用したEC2環境構築手順](#cloudformationを利用したec2環境構築手順)
   - [Docker開発環境構築手順](#docker開発環境構築手順)
     - [Dockerファイル全体構成](#dockerファイル全体構成)
     - [必要条件とツールの導入](#必要条件とツールの導入)
@@ -18,30 +13,53 @@
   - [開発環境URLアクセス法](#開発環境urlアクセス法)
   - [Dockerコマンド](#dockerコマンド)
 
+## 置くところ
+volumeをCドライブとかとやり取りするとめちゃくちゃ重いのでwslのlinuxの中の、homeとかに置くといいらしい。<br>
+なので `\\wsl.localhost\Ubuntu\home\●linuxのユーザ名●\` の下にprojectのファイル置き場みたいのを作って置いたらいいと思う。<br>
+例 `\\wsl.localhost\Ubuntu\home\●linuxのユーザ名●\projects\someproject` の中に、下記構造物を入れる。<br>
+上のパスの someproject が下記例で言うところの ｢/projectフォルダ｣。
+
+## 構造
+```
+/projectフォルダ
+    .devcontainer/
+        db/
+            Dockerfile
+            my.cnf
+        php/
+            Dockerfile
+            php.ini
+        phpMyAdmin/
+            Dockerfile
+            php.ini
+        proxy/
+            Dockerfile
+            default.conf.template
+        .env
+        docker-compose.yml
+    docker_volumes/
+        db/
+            (何も置かない)
+        php/
+            laravel/
+                (何も置かない)
+            log/
+                (何も置かない)
+        proxy/
+            ssl/
+                (ホスト側で生成した秘密鍵を置く。 localhost-key.pem と localhost.pem 、 など)
+```
+
+## dockerでSSLをつかう(windowsの方法)
+参考 https://shimota.app/windows環境にhttps-localhost-環境を作成する/
+- https://chocolatey.org/install でコマンドをコピー
+- powershellを管理者で実行、貼り付け、 `choco list -l` で確認
+- powershellを一旦閉じて再度開けて、 `choco install mkcert` やって `mkcert --install`
+- localhost-key.pem と localhost.pem が実行したディレクトリに落ちてるので保存して使い回す。
+
+
 ## Laravelのライブラリ導入とコマンド一覧
-
 `laravel/README.md`にライブラリ導入手順や`artisan`コマンドの一覧が記述されています。
-
-## circleciの設定
-
-PHP8・NodeJS、MySQLのcicrlecici公式提供のDocker最新イメージを利用すると自動テストが止まらない現象や他不具合が
-発生するため、後ほど調査予定。
-
-### ファイル全体構成
-
-- .circleci/
-    - circleciで利用する。リソースが格納。
-
-## AWS環境構築手順
-
-### AWSリソース構成
-
-- aws/CloudFormation/
-    - CloudFormationで利用する。スタックのリソースが格納。
-
-### CloudFormationを利用したEC2環境構築手順
-
-`aws/CloudFormation/README.md`の手順に従い実施してください。
 
 ## Docker開発環境構築手順
 
@@ -55,8 +73,6 @@ PHP8・NodeJS、MySQLのcicrlecici公式提供のDocker最新イメージを利�
     - `docker-compose build`で利用するphpの設定が格納。
 - .devcontainer/proxy/
     - `docker-compose build`で利用するnginxの設定が格納。
-- Makefile
-    - 開発環境を構築する際に利用するコマンドが記載されています。
 
 ### 必要条件とツールの導入
 
@@ -66,91 +82,110 @@ PHP8・NodeJS、MySQLのcicrlecici公式提供のDocker最新イメージを利�
 [Dockerプラグイン](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)を導入してください。
 
 ### Dockerインフラ構築
-
-- **複数コンテナを稼働させる場合**
-    1. ルートディレクトリ下の`.devcontainer`ディレクトリ名を任意の名前変更。
-    上記のディレクトリ名がcomposeのコンテナ名になるので複数立ち上げる場合は重複させないようにディレクトリ名を変更する。
-- **起動しなくなった場合**
-    1. `.devcontainer/`下で `docker-compose down --rmi all --volumes`を実行。
-    2. `.devcontainer/db/data`ディレクトリ(存在する場合は)削除
-    3. Docker本体を再起動。
-    4. `.devcontainer/`下で`docker-compose up -d --build`を実行。
-- **コンテナ立ち上げ後に`.devcotainer/.env`を編集した場合**
-    1. 画面左の[Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)パネルをクリック。
-    2. 対象のコンテナをクリックしCompose Downを実行。
-    3. `docker-compose up -d --build`を実行。
 1. `.devcontainer`ディレクトリ下で`.env`ファイルを作成し`env.example`の内容をコピーします。
-2. 作成した`.env`ファイルを作成するアプリケーションに応じて編集します。
-    
-    **コンテナを複数立ち上げる場合はブラウザからアクセスするポート番号を重複しないように変更する。**
-    
+1. 作成した`.env`ファイルを作成するアプリケーションに応じて編集します。
     ```
     #### .devcontainer/.envファイル ###
-    
-    PROJECT_NAME=sample #プロジェクト名
-    NODEJS_VERSION= # nodejsのバージョン
-    LARAVEL_VERSION= # laravelのバージョン
-    APP_NAME= # アプリ名: この名前がdockerコンテナのプレフィックス名になる 
-    DB_DATABASE= # db名
-    DB_USER=user # dbユーザー名
-    USER=user # ユーザー名
-    DB_PASSWORD=password # dbパスワード
-    PROXY_PUBLIC_PORT= # webサーバー: ブラウザからアクセスするポート番号
-    PHP_MYADMIN_PUBLIC_PORT= # PhpMyAdmin: ブラウザからアクセスするポート番号
-    MEMORY_LIMIT=128M # sqlファイルのPhpMyAdminファイルのアップロードサイズ
-    UPLOAD_LIMIT=64M #　sqlファイルPhpMyAdminアップロードサイズ
+    #プロジェクト名
+    PROJECT_NAME=●●●プロジェクト名●●●
+
+    # nodejsのバージョン https://github.com/nodesource/distributions/blob/master/README.md からOSごとの設定を確認
+    # 書き方は NODEJS_VERSION=20.x など
+    NODEJS_VERSION=●●●nodejsのバージョン●●●
+
+    # laravelのバージョン 書き方は LARAVEL_VERSION=10.* など
+    LARAVEL_VERSION=●●●laravelのバージョン●●●
+
+    # アプリ名: この名前がdockerコンテナのプレフィックス名になる
+    APP_NAME=●●●プロジェクト名●●●
+
+    # linux環境のユーザー名
+    USER=user
+
+    # linux環境のユーザー(上記 USER で設定したもの)のパスワード
+    PASSWORD=password
+
+    # db名
+    DB_DATABASE=●●●プロジェクト名●●●
+
+    # dbユーザー名…laravelの.envはこれに合わせる
+    DB_USER=db_user
+
+    # dbパスワード…laravelの.envはこれに合わせる
+    DB_PASSWORD=db_password
+
+    # webサーバー: webブラウザからアクセスするポート番号。非ssl。
+    PROXY_PUBLIC_PORT=8080
+
+    # webサーバー: ssl接続するポート番号
+    PROXY_SSL_PORT=8443
+
+    # Viteのポート番号
+    VITE_PORT=5173
+
+    # PhpMyAdmin: webブラウザからアクセスするポート番号
+    PHP_MYADMIN_PUBLIC_PORT=83306
+
+    # sqlファイルのPhpMyAdminファイルのアップロードサイズ
+    MEMORY_LIMIT=128M
+
+    # sqlファイルPhpMyAdminアップロードサイズ
+    UPLOAD_LIMIT=64M
     ```
-    
-    編集が完了したら`.devcontainer/db/init/init.sql`を新規作成します。
-    
-    - `init.sql`ファイル内に下記内容を追記します。
-    `CREATE DATABASE IF NOT EXISTS .envファイル追記したデータベース名 CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;`
-    
-    `~~.devcontainer/proxy/server.conf`ファイルの以下項目を変更します.`$APP_NAME`は.`.env`ファイル記載の`APP_NAME=アプリケーションを指定root   /var/www/html/`$APP_NAME`/public;`~~**補足**`default.conf.template`のrootパスとlaravelプロジェクトを作成するコンテナのパスが一致することを確認してください。
-    $PROJECT_NAMEは.devcontainer/.env記載の環境変数
-    
+
+    ● 補足
+    proxy/default.conf.template のrootパスとlaravelプロジェクトを作成するコンテナのパスが一致することを確認してください。
     ```
-    # default.conf.templateのルートパス定義
-    root   /var/www/html/${PROJECT_NAME}/public;
+    # proxy/default.conf.templateのルートパス定義
+    root /var/www/html/public;
     # phpコンテナ内のlaravelプロジェクトのパス
-    /var/www/html/${PROJECT_NAME}/public;
-    
+    /var/www/html/public;
     ```
-    
-3. `/.devcontainer`ディレクトリに移動し`docker-compose up -d --build`を実行。
-- 上記手順で`ERROR: for proxy Cannot start service proxy: Mounts denied:`が出力された場合
+
+1. `/.devcontainer`ディレクトリに移動し`docker-compose up -d --build`を実行。
+### 上記手順で`ERROR: for proxy Cannot start service proxy: Mounts denied:`が出力された場合
 - DockerアプリのPreferences > Resources > File sharing設定にプロジェクトディレクトリのパスを追加。
 - Apply & Restartボタンで再起動。
 
+
+### 複数コンテナを稼働させる場合
+1. ルートディレクトリ下の`.devcontainer`ディレクトリ名を任意の名前変更。
+    上記のディレクトリ名がcomposeのコンテナ名になるので複数立ち上げる場合は重複させないようにディレクトリ名を変更する。
+**コンテナを複数立ち上げる場合はブラウザからアクセスするポート番号を重複しないように変更する。**
+
+### 起動しなくなった場合
+    1. `.devcontainer/`下で `docker-compose down --rmi all --volumes`を実行。
+    1. `.devcontainer/db/data`ディレクトリ(存在する場合は)削除
+    1. Docker本体を再起動。
+    1. `.devcontainer/`下で`docker-compose up -d --build`を実行。
+### コンテナ立ち上げ後に`.devcotainer/.env`を編集した場合
+    1. 画面左の[Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)パネルをクリック。
+    2. 対象のコンテナをクリックしCompose Downを実行。
+    3. `docker-compose up -d --build`を実行。
+
 ### コンテナ内での作業
+[Dockerプラグイン](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) 導入。
 
-[Dockerプラグイン](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
-
-- 導入済みの場合
-エディタ画面左側にDocdkrのアイコンが表示されます。
+- エディタ画面左側にDocdkrのアイコンが表示されます。
 アイコンをクリックし最上段にある`CONTAINERS`をクリックします。
 コンテナリストが表示されサフィックスに`-php`が表示されている箇所をクリックします。
-Attach Shellと表示されている箇所をクリックします。
-VSCodeにコンテナのターミナル画面が表示されます。
-
-~~以下のコマンドでphpコンテナに入ります。`${APP_NAME}`は.`.env`ファイル記載の`APP_NAME=アプリケーションを指定docker exec -it ${APP_NAME}-php bash`~~
+    - Attach Shellと表示されている箇所をクリックしたとき
+    →VSCodeにコンテナのターミナル画面が表示されます。
+    - Attach Visual Studio Code と表示されている箇所をクリックしたとき
+    →VSCodeの新しいウィンドウがコンテナ内に開きます。
 
 ### プロジェクトの作成とLaravel環境設定
 
 1. “$APP_NAME名”(.devcontainer/.envファイルに記載)-php コンテナに入る。
-2. 新規プロジェクトの場合は/var/www/htmlディレクトリで以下コマンドを実行
-
-```bash
-# /var/www/htmlディレクトリに下記スクリプトファイルが存在するので以下コマンドを実行
-. ./create_laravel_project.sh
-```
+1. 新規プロジェクトの場合は/var/wwwディレクトリで以下コマンドを実行
+`composer create-project laravel/laravel "html" "${LARAVEL_VERSION}" --prefer-dist`
 
 - 警告: バージョンが不一致警告が出力された場合
     - `php --version`でバージョンを確認し`composer config platform.php バージョン番号`でバージョンを合わせる。
     - `composer install`を実行する。
     - `php artisan key:generate`を実行する。
 1. 作成したプロジェクトに移動し`.env`ファイル内を`.devcontainer/.env`に基づいて下記値に変更する。
-    
+
     ```
     APP_NAME=`.devcontainer/.env`に記載されているアプリ名
     ...
@@ -160,9 +195,9 @@ VSCodeにコンテナのターミナル画面が表示されます。
     DB_DATABASE=`.devcontainer/.env`に記載されている接続先データベース
     DB_USERNAME=`.devcotainer/.env`に記載されているDBユーザー
     DB_PASSWORD=`.devcotainer/.env`に記載されているパスワード
-    
+
     ```
-    
+
 2. `http://127.0.0.1:{.devcontainer/.env記載のPHP_MYADMIN_PUBLIC_PORT}`でPhpMyAdminにアクセスできるか確認します。
 3. Gitからクローンした場合(プロジェクト新規作成の場合は不要)
 プロジェクトディレクトリ内で`composer install`を実行。
@@ -176,7 +211,7 @@ VSCodeにコンテナのターミナル画面が表示されます。
 <html ...>
     <head>
         {{-- ... --}}
-        # 下記を追加する 
+        # 下記を追加する
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
 ```
@@ -198,8 +233,8 @@ export default defineConfig({
     server: {
         host: true, // trueにすると host 0.0.0.0
         // ホットリロードHMRとlocalhost: マッピング
-        hmr: { 
-            host: "localhost", 
+        hmr: {
+            host: "localhost",
         },
         // ポーリングモードで動作 wsl2の場合これを有効しないとホットリロード反映しない
         watch: {
@@ -209,7 +244,7 @@ export default defineConfig({
 });
 ```
 - hostオプションを付与して下記コマンドを実行
-  - `npm run dev -- --host`
+  `npm run dev -- --host`
 
 ## テスト開発環境設定とDB設定
 ***.env_testingを作成***
@@ -229,18 +264,18 @@ export default defineConfig({
     ```
 
 ***database.phpを編集***
-    
+
     ```php
     // mysqlの配列をコピーして貼り付け下記部分を変更
     'mysql_testing' => [　　　　名前変更
        'database' => 'test_db名',             変更点
     ],
     ```
-    
+
 ****phpunitファイルの編集****
-    
+
     phpunitを実行する際に使用するデータベースを設定。
-    
+
     ```xml
     <php>
     <server name="APP_ENV" value="testing"/>
@@ -255,7 +290,7 @@ export default defineConfig({
     <server name="DB_HOST" value="127.0.0.1"/>
     </php>
     ```
-    
+
 ***テスト用データベースを正しく使用できるか確認***
 `php artisan migrate --env=testing`
 
@@ -281,7 +316,7 @@ use App\Item;
 class ExampleTest extends TestCase
 {
 	use RefreshDatabase;
-	
+
 	public function setUp(): void
 	{
 		dd(env('APP_ENV'), env('DB_DATABASE'), env('DB_CONNECTION'));
