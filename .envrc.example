@@ -22,6 +22,10 @@ export PROXY_PUBLIC_PORT=
 export PROXY_SSH_PORT=
 # viteのポート
 export VITE_PORT=
+# バックエンドでNode jsを利用する場合は下記ポートを指定する
+export NODE_PORT=
+# バックエンドでNode jsのstrapiを利用する場合は下記ポートを指定する
+export STRAPI_PORT=
 
 ## gitセットアップスクリプトで利用する環境変数 ##
 # レポジトリ
