@@ -1,5 +1,5 @@
-# FROM --platform=linux/x86_64 php:8.2-fpm
-FROM --platform=linux/x86_64 php:7.4-fpm
+FROM --platform=linux/x86_64 php:8.2-fpm
+# FROM --platform=linux/x86_64 php:7.4-fpm
 
 # 引数を受け取ってコンテナ内で環境変数を定義
 ARG NODEJS_VERSION
@@ -30,18 +30,20 @@ RUN apt-get update \
     zip \
     unzip \
     vim \
+    sudo \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libmcrypt-dev \
     libpng-dev \
     libfontconfig1 \
     libxrender1 \
+    libicu-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install gd
 RUN docker-php-ext-install bcmath
-RUN docker-php-ext-install pdo_mysql mysqli exif
+RUN docker-php-ext-install pdo_mysql mysqli exif intl
 RUN PHP_OPENSSL=yes
 
 # composerのインストール
