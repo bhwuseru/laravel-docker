@@ -360,4 +360,6 @@ vendor/bin/phpunit tests/Feature/ExampleTest.php
     - docker-compse.ymlが配置されているディレクトリで`docker-compose down --rmi all --volumes --remove-orphans`
 - Dockerで作成したコンテナを全削除
     - `docker rm $(docker ps -a -q)`
+- Dockerのnoneイメージのみ全削除
+    - `docker rmi $(docker images -f "dangling=true" -q)`
 - Dockerのイメージを全削除
