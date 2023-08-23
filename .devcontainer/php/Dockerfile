@@ -32,6 +32,7 @@ RUN apt-get update \
     vim \
     sudo \
     libfreetype6-dev \
+    libzip-dev \
     libjpeg62-turbo-dev \
     libmcrypt-dev \
     libpng-dev \
@@ -43,7 +44,7 @@ RUN apt-get update \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install gd
 RUN docker-php-ext-install bcmath
-RUN docker-php-ext-install pdo_mysql mysqli exif intl
+RUN docker-php-ext-install pdo_mysql mysqli exif intl zip
 RUN PHP_OPENSSL=yes
 
 # composerのインストール
