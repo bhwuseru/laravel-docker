@@ -13,3 +13,6 @@ in_php:
 remove_all:
 	@echo 'docker-compose down --rmi all --volumes --remove-orphan'
 		docker-compose down --rmi all --volumes --remove-orphan
+
+clean-none-images:
+    docker rmi $(docker images -f "dangling=true" -q)
