@@ -154,10 +154,27 @@ volumeをCドライブとかとやり取りするとめちゃくちゃ重いの�
 **コンテナを複数立ち上げる場合はブラウザからアクセスするポート番号を重複しないように変更する。**
 
 ### 起動しなくなった場合
+- 起動しない
     1. `.devcontainer/`下で `docker-compose down --rmi all --volumes`を実行。
-    1. `.devcontainer/db/data`ディレクトリ(存在する場合は)削除
-    1. Docker本体を再起動。
-    1. `.devcontainer/`下で`docker-compose up -d --build`を実行。
+    2. `.devcontainer/db/data`ディレクトリ(存在する場合は)削除
+    3. `docker rmi $(docker images -f "dangling=true" -q)`でnone(不明)dockerイメージ削除
+    4. `.devcontainer/`下で`docker-compose build --no-cache`
+    5. `.devcontainer/`下で`docker-compose up -d`を実行。
+- Windowsでエラー docker-credential-desktop.exe": executable file not found in $PATH, out: の場合
+    1. `~/.docker/config.json`ファイル内
+    ```
+    {
+        "credsStore": "desktop.exe"
+    }
+    ```
+    ```
+    {
+        "credStore": "desktop.exe"
+    }
+    ```
+
+    上記`"credsStore"`のsを除外し`docker-compose build --no-cache`を実行
+
 ### コンテナ立ち上げ後に`.devcotainer/.env`を編集した場合
     1. 画面左の[Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)パネルをクリック。
     2. 対象のコンテナをクリックしCompose Downを実行。
