@@ -90,7 +90,7 @@ wsl上上では [Dockerインフラ構築](#dockerインフラ構築)前に下�
 
 1〜3までの手順を実行すると以下が変更または追加される。
 - `.devcontainer`フォルダが.envrcに設定されている`.${PROJECT_NAME}`にリネームされる。
-- `.${PROJECT_NAME}/db/init/init.sql`が生成。されている。
+- `.${PROJECT_NAME}/db/init/init.sql`が生成。
 このファイルは内容は`${PROJECT_NAME}_db`とテスト用DBが定義されたファイルを作成する。
 sqlファイルは.docker-compose.ymlで利用される。
 - `.${PROJECT_NAME}/.env`ファイルを作成する。ファイル内容は`.envrc`で定義したポートなど設定ファイルとして作成される。
@@ -99,8 +99,8 @@ sqlファイルは.docker-compose.ymlで利用される。
 1. プロジェクト直下に存在する.envrc.expamleファイルを.envrcにリネーム
 2. .envrcファイル内の環境変数のポート番号などを設定する。このファイルは後述3のシェルスクリプトが参照する。
 3. `bash ./bin/gene_docker_compose_env`を実行
-    実行するとプロジェクト直下の.devcontainerフォルダが.envrcで定義されている`.${PROJECT_NAME}`名に。置き換わる。
-    このスクリプトは`.${PROJECT_NAME}/.env`が新たに生成し`.envrc`で定義した環境変数が。設定される。
+    実行するとプロジェクト直下の.devcontainerフォルダが.envrcで定義されている`.${PROJECT_NAME}`名に置き換わる。
+    このスクリプトは`.${PROJECT_NAME}/.env`が新たに生成し`.envrc`で定義した環境変数が設定される。
 
 ### Dockerインフラ構築
 1. `.devcontainer`ディレクトリ下で`.env`ファイルを作成し`env.example`の内容をコピーします。
