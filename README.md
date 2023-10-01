@@ -5,6 +5,7 @@
   - [Docker開発環境構築手順](#docker開発環境構築手順)
     - [Dockerファイル全体構成](#dockerファイル全体構成)
     - [必要条件とツールの導入](#必要条件とツールの導入)
+    - [wsl上での構築手順(任意)](#wsl上での構築手順任意)
     - [Dockerインフラ構築](#dockerインフラ構築)
     - [コンテナ内での作業](#コンテナ内での作業)
     - [プロジェクトの作成とLaravel環境設定](#プロジェクトの作成とlaravel環境設定)
@@ -80,6 +81,26 @@ volumeをCドライブとかとやり取りするとめちゃくちゃ重いの�
 [docker-composeの詳細](https://docs.docker.com/compose/compose-file/)はリファレンスを参考にしてください。
 [docerk-composeコマンド](https://matsuand.github.io/docs.docker.jp.onthefly/engine/reference/commandline/compose/)はリファレンスを参考にしてください。
 [Dockerプラグイン](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)を導入してください。
+
+### wsl上での構築手順(任意)
+
+wsl上上では [Dockerインフラ構築](#dockerインフラ構築)前に下記手順を実施(任意)。
+
+この手順を踏まなくても[Dockerインフラ構築](#dockerインフラ構築)に移行しても構築は可能。
+
+1〜3までの手順を実行すると以下が変更または追加される。
+- `.devcontainer`フォルダが.envrcに設定されている`.${PROJECT_NAME}`にリネームされる。
+- `.${PROJECT_NAME}/db/init/init.sql`が生成。されている。
+このファイルは内容は`${PROJECT_NAME}_db`とテスト用DBが定義されたファイルを作成する。
+sqlファイルは.docker-compose.ymlで利用される。
+- `.${PROJECT_NAME}/.env`ファイルを作成する。ファイル内容は`.envrc`で定義したポートなど設定ファイルとして作成される。
+
+
+1. プロジェクト直下に存在する.envrc.expamleファイルを.envrcにリネーム
+2. .envrcファイル内の環境変数のポート番号などを設定する。このファイルは後述3のシェルスクリプトが参照する。
+3. `bash ./bin/gene_docker_compose_env`を実行
+    実行するとプロジェクト直下の.devcontainerフォルダが.envrcで定義されている`.${PROJECT_NAME}`名に。置き換わる。
+    このスクリプトは`.${PROJECT_NAME}/.env`が新たに生成し`.envrc`で定義した環境変数が。設定される。
 
 ### Dockerインフラ構築
 1. `.devcontainer`ディレクトリ下で`.env`ファイルを作成し`env.example`の内容をコピーします。
@@ -176,9 +197,10 @@ volumeをCドライブとかとやり取りするとめちゃくちゃ重いの�
     上記`"credsStore"`のsを除外し`docker-compose build --no-cache`を実行
 
 ### コンテナ立ち上げ後に`.devcotainer/.env`を編集した場合
-    1. 画面左の[Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)パネルをクリック。
-    2. 対象のコンテナをクリックしCompose Downを実行。
-    3. `docker-compose up -d --build`を実行。
+
+1. 画面左の[Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)パネルをクリック。
+2. 対象のコンテナをクリックしCompose Downを実行。
+3. `docker-compose up -d --build`を実行。
 
 ### コンテナ内での作業
 [Dockerプラグイン](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) 導入。
