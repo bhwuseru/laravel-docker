@@ -244,7 +244,39 @@ sqlファイルは.docker-compose.ymlで利用される。
 `php artisan migrate --seed`
 
 ## Vite設定
-1. `welcome.blade.php`に以下を追加
+
+1. .devcontainer/.envファイル下記変数に任意のポートを設定する
+
+```
+VITE_PORT= # php artisan serveで動かす場合にviteで構築されたファイルを読み込むために必要
+PHP_SERVE_PORT= 
+```
+
+2. docker-compose.ymlファイル内: phpサービスの下記コメントアウトを外す。
+
+```
+# ports:
+      # - ${PHP_SERVE_PORT}:8000
+      # - ${VITE_PORT}:${VITE_PORT}
+ args:
+     # VITE_PORT: ${VITE_PORT}
+```
+
+3. .devcontainer/php/Dockerfileの以下Vite/php artisan serve部分のコメントアウトを外す
+```
+# 引数を受け取ってコンテナ内で環境変数を定義
+# ARG VITE_PORT
+
+# ENV VITE_PORT=${VITE_PORT}
+
+# Vite開発環境用のポート
+# EXPOSE ${VITE_PORT}
+# php artisan serveポート
+# EXPOSE 8000
+```
+
+
+4. `welcome.blade.php`に以下を追加
 ```
 <!DOCTYPE html>
 <html ...>
@@ -255,7 +287,7 @@ sqlファイルは.docker-compose.ymlで利用される。
     </head>
 ```
 
-2. vite.config.jsまたはvite.config.tsをを以下を参考に編集する。
+5. vite.config.jsまたはvite.config.tsをを以下を参考に編集する。
 ```
 ## vite.config.jsの設定
 import { defineConfig } from "vite";
@@ -270,7 +302,7 @@ export default defineConfig({
         }),
     ],
     server: {
-         //　docker-composeの.envで定義した${VITE_PORT}を指定。(※コンテナ内のポートではない)
+         //　docker-composeの.envで定義した${VITE_PORT}を指定。
         port: ${VITE_PORT},
         host: true, // trueにすると host 0.0.0.0
         // ホットリロードHMRとlocalhost: マッピング
@@ -284,7 +316,7 @@ export default defineConfig({
     },
 });
 ```
-3. 下記2点のコマンドを実行状態する。
+6. 下記2点のコマンドを実行状態する。
 この両者コマンドを実行状態にしないとvite・laravelの開発環境が正常に動作しない。
 
 ```
