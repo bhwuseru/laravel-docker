@@ -244,7 +244,7 @@ sqlファイルは.docker-compose.ymlで利用される。
 `php artisan migrate --seed`
 
 ## Vite設定
-- `welcome.blade.php`に以下を追加
+1. `welcome.blade.php`に以下を追加
 ```
 <!DOCTYPE html>
 <html ...>
@@ -255,7 +255,7 @@ sqlファイルは.docker-compose.ymlで利用される。
     </head>
 ```
 
-- vite.config.jsまたはvite.config.tsをを以下を参考に編集する。
+2. vite.config.jsまたはvite.config.tsをを以下を参考に編集する。
 ```
 ## vite.config.jsの設定
 import { defineConfig } from "vite";
@@ -270,6 +270,8 @@ export default defineConfig({
         }),
     ],
     server: {
+         //　docker-composeの.envで定義した${VITE_PORT}を指定。(※コンテナ内のポートではない)
+        port: ${VITE_PORT},
         host: true, // trueにすると host 0.0.0.0
         // ホットリロードHMRとlocalhost: マッピング
         hmr: {
@@ -282,8 +284,13 @@ export default defineConfig({
     },
 });
 ```
-- hostオプションを付与して下記コマンドを実行
-  `npm run dev -- --host`
+3. 下記2点のコマンドを実行状態する。
+この両者コマンドを実行状態にしないとvite・laravelの開発環境が正常に動作しない。
+
+```
+npm run dev -- --host
+php artisan serve --host 0.0.0.0
+```
 
 ## テスト開発環境設定とDB設定
 ***.env_testingを作成***
