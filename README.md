@@ -324,6 +324,27 @@ npm run dev -- --host
 php artisan serve --host 0.0.0.0
 ```
 
+**Vite開発設定時の注意点**
+
+welcome.blade.phpを読み込時にvite.config.jsで定義されているserver: { port: 番号}で指定されたURLにアクセスしようとする。
+外部ポートとコンテナ内でviteを起動してアクセスするポートを一致させないとアクセスできない。
+
+docker-compse.ymlで下記定義されている場合の例に説明すると、
+
+```
+ports:
+    15173:5173
+```
+welcome.blade.php返却->localhost:5173に存在するリソースにアクセスしようとする。
+このポートは外部公開されてないので、読み込む事ができないためエラーになり画面が真っ白になる。
+```
+
+server: {
+         //　docker-composeの.envで定義した${VITE_PORT}を指定。
+        port: 
+@vite(['resources/css/app.css', 'resources/js/app.js'])
+```
+
 ## テスト開発環境設定とDB設定
 ***.env_testingを作成***
  `cp .env .env_testing`
