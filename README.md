@@ -1,12 +1,18 @@
 # 環境構築資料
 
 - [環境構築資料](#環境構築資料)
+  - [置くところ](#置くところ)
+    - [構造](#構造)
+  - [dockerでSSLをつかう(windowsの方法)](#dockerでsslをつかうwindowsの方法)
   - [Laravelのライブラリ導入とコマンド一覧](#laravelのライブラリ導入とコマンド一覧)
   - [Docker開発環境構築手順](#docker開発環境構築手順)
     - [Dockerファイル全体構成](#dockerファイル全体構成)
     - [必要条件とツールの導入](#必要条件とツールの導入)
     - [wsl上での構築手順(任意)](#wsl上での構築手順任意)
     - [Dockerインフラ構築](#dockerインフラ構築)
+    - [複数コンテナを稼働させる場合](#複数コンテナを稼働させる場合)
+    - [起動しなくなった場合](#起動しなくなった場合)
+    - [コンテナ立ち上げ後に`.devcotainer/.env`を編集した場合](#コンテナ立ち上げ後にdevcotainerenvを編集した場合)
     - [コンテナ内での作業](#コンテナ内での作業)
     - [プロジェクトの作成とLaravel環境設定](#プロジェクトの作成とlaravel環境設定)
   - [Vite設定](#vite設定)
@@ -20,7 +26,7 @@ volumeをCドライブとかとやり取りするとめちゃくちゃ重いの�
 例 `\\wsl.localhost\Ubuntu\home\●linuxのユーザ名●\projects\someproject` の中に、下記構造物を入れる。<br>
 上のパスの someproject が下記例で言うところの ｢/projectフォルダ｣。
 
-## 構造
+### 構造
 ```
 /projectフォルダ
     .devcontainer/
@@ -164,9 +170,17 @@ sqlファイルは.docker-compose.ymlで利用される。
     ```
 
 1. `/.devcontainer`ディレクトリに移動し`docker-compose up -d --build`を実行。
-### 上記手順で`ERROR: for proxy Cannot start service proxy: Mounts denied:`が出力された場合
-- DockerアプリのPreferences > Resources > File sharing設定にプロジェクトディレクトリのパスを追加。
+ 
+ **ビルドができない。コンテナが起動しない場合。**
+ - `for proxy Cannot start service proxy: Mounts denied:`が出力された場合
+    DockerアプリのPreferences > Resources > File sharing設定にプロジェクトディレクトリのパスを追加。
 - Apply & Restartボタンで再起動。
+
+- `Service 'node' failed to build: failed to register layer: Error processing tar file(exit status 1): write /usr/local/bin/node: no space left on device` 
+- 容量が足りないため、下記コマンドでキャッシュファイルを削除
+`docker builder prune`
+
+
 
 
 ### 複数コンテナを稼働させる場合
@@ -461,4 +475,5 @@ vendor/bin/phpunit tests/Feature/ExampleTest.php
     - `docker rm $(docker ps -a -q)`
 - Dockerのnoneイメージのみ全削除
     - `docker rmi $(docker images -f "dangling=true" -q)`
-- Dockerのイメージを全削除
+- Dockerの容量が足りないなど、キャッシュファイルを削除
+    -  `docker builder prune`
