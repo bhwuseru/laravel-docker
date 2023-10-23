@@ -18,6 +18,7 @@
   - [Vite設定](#vite設定)
   - [テスト開発環境設定とDB設定](#テスト開発環境設定とdb設定)
   - [開発環境URLアクセス法](#開発環境urlアクセス法)
+  - [自動化スクリプト](#自動化スクリプト)
   - [Dockerコマンド](#dockerコマンド)
 
 ## 置くところ
@@ -462,6 +463,16 @@ vendor/bin/phpunit tests/Feature/ExampleTest.php
     2. サーバーを再起動。
     3. 起動後に`cd プロジェクト名`を実行。
     4. `php artisan config:clear`を実行。
+
+## 自動化スクリプト
+
+.envrcファイルの環境変数を設定してから以下コマンドを実行すると、docker-composeのコンテナを立ち上げまでを自動実行する。
+
+1. `.envrc`ファイルの環境変数を設定
+2. EnvLaravelディレクトリ直下で実行する。立ち上げは下記コマンドを実行
+- `sudo bash ./bin/setup_docker_environment.sh`
+3. EnvLaravelディレクトリ直下で実行する。立ち上げた環境を初期状態に戻す
+- `sudo bash ./bin/reset_docker_environment.sh `
 
 ## Dockerコマンド
 
