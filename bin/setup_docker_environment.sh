@@ -25,9 +25,22 @@ if [ -n "$none_images" ]; then
     docker rmi $(docker images -f "dangling=true" -q)
 fi
 
-# Docker Composeを使用してコンテナをビルドおよび起動
-docker-compose build --no-cache && \
-docker-compose up -d && \
+# docker と docker-compose コマンドの存在を確認する
+# docker-composeで構築する場合
+if  type "docker-compose" &>/dev/null; then
+    docker-compose build --no-cache && \
+    docker-compose up -d && \
+    chmod 777 "$PROJECT_ROOT/php" && \
+    # 実行したファイルのディレクトリ位置に戻る
+    cd ..
+# docker composeプラグインで構築する場合
+elif docker compose version | grep -q Docker; then
+    docker compose build --no-cache  && \
+    docker compose up -d && \
+    chmod 777 "$PROJECT_ROOT/php" && \
+    # 実行したファイルのディレクトリ位置に戻る
+    cd ..
+else
+    echo "dockerが存在しません"
+fi
 
-# 実行したファイルのディレクトリ位置に戻る
-cd ..
