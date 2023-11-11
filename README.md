@@ -104,7 +104,15 @@ sqlファイルは.docker-compose.ymlで利用される。
 
 
 1. プロジェクト直下に存在する.envrc.expamleファイルを.envrcにリネーム
-2. .envrcファイル内の環境変数のポート番号などを設定する。このファイルは後述3のシェルスクリプトが参照する。
+2. .envrcファイル内の環境変数のポート番号などを設定する。<br>このファイルは後述3のシェルスクリプトが参照する。<br>
+`.envrcファイル
+    ```
+    VOLUME_PATH=${HOME}/projects
+    ```
+
+    上記の設定したプロジェクトのルートディレクトリパスがコンテナエントリーポイントになる。<br>
+    この環境変数のパス配下${PROJECT_NAME}ディレクトリがLaravelのプロジェクトのディレクトリになる。
+
 3. `bash ./bin/gene_docker_compose_env`を実行
     実行するとプロジェクト直下の.devcontainerフォルダが.envrcで定義されている`.${PROJECT_NAME}`名に置き換わる。
     このスクリプトは`.${PROJECT_NAME}/.env`が新たに生成し`.envrc`で定義した環境変数が設定される。
@@ -466,11 +474,20 @@ vendor/bin/phpunit tests/Feature/ExampleTest.php
 
 ## 自動化スクリプト
 
-.envrcファイルの環境変数を設定してから以下コマンドを実行すると、docker-composeのコンテナを立ち上げまでを自動実行する。
+.envrcファイルの環境変数を設定してから以下コマンドを実行すると、docker-composeのコンテナを立ち上げまでを自動実行する。<br>
+**注意点 自動化スクリプト生成時に.envrc.example<br>**
+下記環境変数: ${HOME}を利用する場合はsudo権限で実行するとrootパスになるので注意
+```
+# プロジェクトのボリュームパス
+export VOLUME_PATH=${HOME}/projects
+```
+
+`setup_docker_environment.sh`のみsudo権限付与しないで実行する。<br>
+**sudoで実行すると${HOME}がルートパスになるため注意**
 
 1. `.envrc`ファイルの環境変数を設定
 2. EnvLaravelディレクトリ直下で実行する。立ち上げは下記コマンドを実行
-- `sudo bash ./bin/setup_docker_environment.sh`
+- `bash ./bin/setup_docker_environment.sh`
 3. EnvLaravelディレクトリ直下で実行する。立ち上げた環境を初期状態に戻す
 - `sudo bash ./bin/reset_docker_environment.sh `
 

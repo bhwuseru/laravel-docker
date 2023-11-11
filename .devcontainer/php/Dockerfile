@@ -7,21 +7,21 @@ ARG LARAVEL_VERSION
 ARG PROJECT_NAME
 ARG PASSWORD
 ARG USER
-# ARG VITE_PORT
+ARG VITE_PORT
 
 ENV LARAVEL_VERSION=${LARAVEL_VERSION}
 ENV NODEJS_VERSION=${NODEJS_VERSION}
 ENV PROJECT_NAME=${PROJECT_NAME}
 ENV USER=${USER}
 ENV PASSWORD=${PASSWORD}
-# ENV VITE_PORT=${VITE_PORT}
+ENV VITE_PORT=${VITE_PORT}
 
 # Vite開発環境用のポート
-# EXPOSE ${VITE_PORT}
+EXPOSE ${VITE_PORT}
 # Reactの開発環境用のポート
-# EXPOSE 3000
+EXPOSE 3000
 # php artisan serveポート
-# EXPOSE 8000
+EXPOSE 8000
 
 # タイムゾーンを設定
 ENV TZ=Asia/Tokyo
@@ -65,11 +65,19 @@ RUN npm install -g yarn
 
 # 一般権限のユーザーを追加
 RUN useradd -m ${USER} --uid 1000
-RUN gpasswd -a ${USER} sudo
+RUN usermod -aG sudo ${USER}
 RUN echo "${USER}:${PASSWORD}" | chpasswd
+
+# sudo実行時のパスワード入力を省略
+RUN echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER}
+
+# 作業ディレクトリに移動
+WORKDIR /var/www/html
+
+# プロジェクトが存在しない場合はinstall.shスクリプトを使用してLaravelプロジェクトを構築する
+COPY install.sh ${PWD}
+# install.sh を実行
+RUN chmod +x /var/www/html/install.sh && /var/www/html/install.sh
 
 # ユーザーの切替 USER ${USER}
 USER ${USER}
-
-#　作業ディレクトリに移動
-WORKDIR /var/www/html

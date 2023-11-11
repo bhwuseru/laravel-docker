@@ -30,4 +30,4 @@ fi
 rm -rf './db/data' && rm -f './db/init/init.sql' && rm -f ".env" && \
 # プロジェクトディレクトリを元に戻す
 cd ../ && \
-mv .${PROJECT_NAME} '.devcontainer'
+mv "${PROJECT_ROOT}/.${PROJECT_NAME}" "${PROJECT_ROOT}/.devcontainer"
