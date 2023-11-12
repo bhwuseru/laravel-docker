@@ -9,7 +9,7 @@ services:
       - ${PROXY_PUBLIC_PORT}:80
       # - ${PROXY_SSH_PORT}:443
     expose:
-      - 80
+      - "80"
     depends_on:
       - php
       - db
@@ -31,12 +31,17 @@ services:
         LARAVEL_VERSION: ${LARAVEL_VERSION}
         USER: ${USER}
         PASSWORD: ${DB_PASSWORD}
-        VITE_PORT: ${VITE_PORT}
+        # Viteを利用する場合はコメントアウトを解除する
+        # VITE_PORT: ${VITE_PORT}
     container_name: ${APP_NAME}-php
+    # ViteやReact・開発用サーバーのポートを使用するときにコメントアウトを解除する
     ports:
       - ${PHP_SERVE_PORT}:8000
-      - ${VITE_PORT}:${VITE_PORT}
-      - ${REACT_PORT}:3000
+      # - ${VITE_PORT}:${VITE_PORT}
+      # - ${REACT_PORT}:3000
+    expose:
+      - "3000"
+      - "8000"
     depends_on:
       - db
     volumes:
