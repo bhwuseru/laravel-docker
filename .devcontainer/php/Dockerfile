@@ -14,14 +14,11 @@ ENV NODEJS_VERSION=${NODEJS_VERSION}
 ENV PROJECT_NAME=${PROJECT_NAME}
 ENV USER=${USER}
 ENV PASSWORD=${PASSWORD}
-# ENV VITE_PORT=${VITE_PORT}
 
-# Vite開発環境用のポート
+# Viteを利用する場合に使用する
+# ENV VITE_PORT=${VITE_PORT}
+# Vite開発環境用のポートをコンテナに外部公開する
 # EXPOSE ${VITE_PORT}
-# Reactの開発環境用のポート
-# EXPOSE 3000
-# php artisan serveポート
-# EXPOSE 8000
 
 # タイムゾーンを設定
 ENV TZ=Asia/Tokyo
@@ -65,11 +62,14 @@ RUN npm install -g yarn
 
 # 一般権限のユーザーを追加
 RUN useradd -m ${USER} --uid 1000
-RUN gpasswd -a ${USER} sudo
+RUN usermod -aG sudo ${USER}
 RUN echo "${USER}:${PASSWORD}" | chpasswd
+
+# sudo実行時のパスワード入力を省略
+RUN echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER}
+
+# 作業ディレクトリに移動
+WORKDIR /var/www/html
 
 # ユーザーの切替 USER ${USER}
 USER ${USER}
-
-#　作業ディレクトリに移動
-WORKDIR /var/www/html

@@ -1,13 +1,17 @@
 #!/bin/bash
 
-# docker-compose環境のセットアップとコンテナの起動する
-
 # .env ファイルのパスを設定
 envfile_path="$(pwd)/.devcontainer/.env"
 
 # もし .env ファイルが存在する場合は削除
 if [ -f $envfile_path ]; then
     rm -f $envfile_path
+fi
+
+# install.shがボリューム先のディレクトリパスに存在するかチェック
+if [ ! -e "${VOLUME_PATH}/install.sh" ]; then
+    # install.shをボリューム先ディレクトリパスにコピーする
+    cp "${PROJECT_ROOT}/.devcontainer/php/install.sh" "${VOLUME_PATH}/"
 fi
 
 #  .devcontainerディレクトリ(初期状態の場合)に限り.envrcの準備処理を実行

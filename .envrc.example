@@ -4,6 +4,9 @@
 export NODEJS_VERSION='18.x'
 export LARAVEL_VERSION='9.*'
 export PROJECT_ROOT=$(pwd)
+# この環境変数にプロジェクトのマウント先のディレクトリパスを記述する
+# このパスがDockerのnodeコンテナのエントリーポイントとなる
+export VOLUME_PATH=${HOME}/projects
 export PROJECT_NAME=
 export APP_NAME=
 export DB_DATABASE=
