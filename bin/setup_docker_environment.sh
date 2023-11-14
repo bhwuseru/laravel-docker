@@ -8,19 +8,19 @@ if [ -f $envfile_path ]; then
     rm -f $envfile_path
 fi
 
-# install.shがボリューム先のディレクトリパスに存在するかチェック
-if [ ! -e "${VOLUME_PATH}/install.sh" ]; then
-    # install.shをボリューム先ディレクトリパスにコピーする
-    cp "${PROJECT_ROOT}/.devcontainer/php/install.sh" "${VOLUME_PATH}/"
-fi
-
 #  .devcontainerディレクトリ(初期状態の場合)に限り.envrcの準備処理を実行
 if [ -d "$(pwd)/.devcontainer" ]; then
     # Docker Composeの環境設定を生成および実行
     . ./bin/gene_docker_compose_env.sh
 fi
 
-source .envrc && \
+source .envrc
+# install.shがボリューム先のディレクトリパスに存在するかチェック
+if [ ! -e "${VOLUME_PATH}/install.sh" ]; then
+    # install.shをボリューム先ディレクトリパスにコピーする
+    cp "${PROJECT_ROOT}/.${PROJECT_NAME}/php/install.sh" "${VOLUME_PATH}/"
+fi
+
 cd .${PROJECT_NAME} 
 
 # dangling Dockerイメージの削除
