@@ -4,8 +4,8 @@
 envfile_path="$(pwd)/.devcontainer/.env"
 
 # もし .env ファイルが存在する場合は削除
-if [ -f $envfile_path ]; then
-    rm -f $envfile_path
+if [ -f "$envfile_path" ]; then
+    rm -f "$envfile_path"
 fi
 
 #  .devcontainerディレクトリ(初期状態の場合)に限り.envrcの準備処理を実行
@@ -18,10 +18,10 @@ source .envrc
 # install.shがボリューム先のディレクトリパスに存在するかチェック
 if [ ! -e "${VOLUME_PATH}/install.sh" ]; then
     # install.shをボリューム先ディレクトリパスにコピーする
-    cp "${PROJECT_ROOT}/.${PROJECT_NAME}/php/install.sh" "${VOLUME_PATH}/"
+    cp "${PROJECT_NAME_DIR_PATH}/php/install.sh" "${VOLUME_PATH}/"
 fi
 
-cd .${PROJECT_NAME} 
+cd ."${PROJECT_NAME}" || return
 
 # dangling Dockerイメージの削除
 none_images=$(docker images -f "dangling=true" -q)
@@ -34,14 +34,12 @@ fi
 if  type "docker-compose" &>/dev/null; then
     docker-compose build --no-cache && \
     docker-compose up -d && \
-    chmod 777 "$PROJECT_ROOT/php" && \
     # 実行したファイルのディレクトリ位置に戻る
     cd ..
 # docker composeプラグインで構築する場合
 elif docker compose version | grep -q Docker; then
     docker compose build --no-cache  && \
     docker compose up -d && \
-    chmod 777 "$PROJECT_ROOT/php" && \
     # 実行したファイルのディレクトリ位置に戻る
     cd ..
 else
