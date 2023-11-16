@@ -5,7 +5,7 @@
 
 # .envrcを読み込み、プロジェクトディレクトリに移動
 source .envrc && \
-cd ."${PROJECT_NAME}" || return
+cd ."${PROJECT_NAME}" 
 
 # docker-composeの場合
 if  type "docker-compose" &>/dev/null; then

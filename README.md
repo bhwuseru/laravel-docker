@@ -302,45 +302,45 @@ PHP_SERVE_PORT=
 
 
 4. `welcome.blade.php`に以下を追加
-```
-<!DOCTYPE html>
-<html ...>
-    <head>
-        {{-- ... --}}
-        # 下記を追加する
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-```
+    ```
+    <!DOCTYPE html>
+    <html ...>
+        <head>
+            {{-- ... --}}
+            # 下記を追加する
+            @vite(['resources/css/app.css', 'resources/js/app.js'])
+        </head>
+    ```
 
 5. vite.config.jsまたはvite.config.tsをを以下を参考に編集する。
-```
-## vite.config.jsの設定
-import { defineConfig } from "vite";
-import laravel from "laravel-vite-plugin";
+    ```
+    ## vite.config.jsの設定
+    import { defineConfig } from "vite";
+    import laravel from "laravel-vite-plugin";
 
-export default defineConfig({
-    plugins: [
-        laravel({
-            // パス設定
-            input: ["resources/css/app.css", "resources/js/app.js"],
-            refresh: true,
-        }),
-    ],
-    server: {
-         //　docker-composeの.envで定義した${VITE_PORT}を指定。
-        port: ${VITE_PORT},
-        host: true, // trueにすると host 0.0.0.0
-        // ホットリロードHMRとlocalhost: マッピング
-        hmr: {
-            host: "localhost",
+    export default defineConfig({
+        plugins: [
+            laravel({
+                // パス設定
+                input: ["resources/css/app.css", "resources/js/app.js"],
+                refresh: true,
+            }),
+        ],
+        server: {
+            //　docker-composeの.envで定義した${VITE_PORT}を指定。
+            port: ${VITE_PORT},
+            host: true, // trueにすると host 0.0.0.0
+            // ホットリロードHMRとlocalhost: マッピング
+            hmr: {
+                host: "localhost",
+            },
+            // ポーリングモードで動作 wsl2の場合これを有効しないとホットリロード反映しない
+            watch: {
+                usePolling: true,
+            },
         },
-        // ポーリングモードで動作 wsl2の場合これを有効しないとホットリロード反映しない
-        watch: {
-            usePolling: true,
-        },
-    },
-});
-```
+    });
+    ```
 6. 下記2点のコマンドを実行状態する。
 この両者コマンドを実行状態にしないとvite・laravelの開発環境が正常に動作しない。
 
@@ -370,13 +370,90 @@ server: {
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 ```
 
-## テスト開発環境設定とDB設定
+## テスト開発環境設定とDB設定(phpunit.xmlが`<env>`タグの場合)
+1. .env.exampleをコピーして.env.testingを作成する。
+    ```
+    cp .env.example .env.testing
+    ``````
+2. キーを作成
+    ```
+    php artisan key:generate --env=testing
+    ```
+3. .env.testingファイルの下記を変更。
+    ```
+    APP_ENV=testing
+    DB_DATABASE=テストDB
+    ```
+4. phpunit.xmlファイルの下記を変更。
+    ```
+    <env name="DB_DATABASE" value="テストDB"/>
+    ```
+
+5. テストコードに下記を追加。
+    ```
+    use Illuminate\Foundation\Testing\DatabaseMigrations;
+    use Illuminate\Foundation\Testing\DatabaseTransactions;
+
+    class MyTest
+        use DatabaseMigrations;
+        use DatabaseTransactions;
+    ```
+    ```
+        public function setUp(): void
+        {
+            parent::setUp();
+
+            Artisan::call('migrate:fresh --seed');
+        }
+    ```
+
+6. 下記は例
+    ```
+    <?php
+
+    use App\Models\User;
+    use Illuminate\Foundation\Testing\DatabaseMigrations;
+    use Illuminate\Foundation\Testing\DatabaseTransactions;
+    use Tests\TestCase;
+
+    class UserControllerTest extends TestCase
+    {
+        use DatabaseMigrations;
+        use DatabaseTransactions;
+
+        public function setUp(): void
+        {
+            parent::setUp();
+
+            Artisan::call('migrate:fresh --seed');
+        }
+
+        /**
+        * @test
+        */
+        function ユーザー一覧画面が表示できる()
+        {
+            // Arrange（準備）
+            $user = User::factory()->create(['name' => 'テスト']);
+
+            // Act（実行）
+            $response = $this->get('users');
+
+            // Assert（検証）
+            $response
+                ->assertOk()
+                ->assertSee('テスト');
+        }
+    }
+    ```
+
+## テスト開発環境設定とDB設定(phpunit.xmlが`<server>`タグの場合)
 ***.env_testingを作成***
  `cp .env .env_testing`
   .env_testingファイル下記内容を変更
  `cp .env .env_testing`ファイルを作成
  .env_testingの下記を変更または追加
-    ```php
+
     APP_ENV=test
     # dbは追加
     DB_TESTING_CONNECTION=mysql_testing
@@ -384,36 +461,29 @@ server: {
     DB_TESTING_PORT=3306
     DB_TESTING_DATABASE=test_ahr_db
     DB_TESTING_USERNAME=user
-    DB_TESTING_PASSWORD=password
-    ```
 
 ***database.phpを編集***
 
-    ```php
     // mysqlの配列をコピーして貼り付け下記部分を変更
     'mysql_testing' => [　　　　名前変更
        'database' => 'test_db名',             変更点
     ],
-    ```
 
 ****phpunitファイルの編集****
-
     phpunitを実行する際に使用するデータベースを設定。
 
-    ```xml
-    <php>
-    <server name="APP_ENV" value="testing"/>
-    <server name="BCRYPT_ROUNDS" value="4"/>
-    <server name="CACHE_DRIVER" value="array"/>
-    <server name="MAIL_MAILER" value="array"/>
-    <server name="QUEUE_CONNECTION" value="sync"/>
-    <server name="SESSION_DRIVER" value="array"/>
-    <server name="TELESCOPE_ENABLED" value="false"/>
-    <server name="DB_CONNECTION" value="mysql_testing"/>      変更点
-    <server name="DB_DATABASE" value="test_db名"/>       変更点
-    <server name="DB_HOST" value="127.0.0.1"/>
-    </php>
-    ```
+        <php>
+        <server name="APP_ENV" value="testing"/>
+        <server name="BCRYPT_ROUNDS" value="4"/>
+        <server name="CACHE_DRIVER" value="array"/>
+        <server name="MAIL_MAILER" value="array"/>
+        <server name="QUEUE_CONNECTION" value="sync"/>
+        <server name="SESSION_DRIVER" value="array"/>
+        <server name="TELESCOPE_ENABLED" value="false"/>
+        <server name="DB_CONNECTION" value="mysql_testing"/>      変更点
+        <server name="DB_DATABASE" value="test_db名"/>       変更点
+        <server name="DB_HOST" value="127.0.0.1"/>
+        </php>
 
 ***テスト用データベースを正しく使用できるか確認***
 `php artisan migrate --env=testing`
@@ -474,15 +544,20 @@ vendor/bin/phpunit tests/Feature/ExampleTest.php
     3. 起動後に`cd プロジェクト名`を実行。
     4. `php artisan config:clear`を実行。
 
-## 自動化スクリプト
-
-.envrcファイルの環境変数を設定してから以下コマンドを実行すると、docker-composeのコンテナを立ち上げまでを自動実行する。<br>
-**注意点 自動化スクリプト生成時に.envrc.example<br>**
-下記環境変数: ${HOME}を利用する場合はsudo権限で実行するとrootパスになるので注意
-```
-# プロジェクトのボリュームパス
-export VOLUME_PATH=${HOME}/projects
-```
+## Make 自動化スクリプト
+以下コマンドを実行するとdockerのコンテナの自動で作成と削除を実行してくれる。
+- makeが導入されていない場合は以下コマンドで導入する。
+    ```
+    sudo apt install make
+    ```
+- .envrcファイルの定義情報を元にdocker-composeの開発環境を構築する。
+	```
+    make container-init
+    ```
+- docker-composeの環境を一旦削除して初期状態に戻したい場合は以下を実行する。
+    ```
+    make container-remove 
+    ```
 
 `setup_docker_environment.sh`のみsudo権限付与しないで実行する。<br>
 **sudoで実行すると${HOME}がルートパスになるため注意**

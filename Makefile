@@ -1,18 +1,10 @@
-setup:
-	sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-	sudo chmod +x /usr/local/bin/docker-compose
-build:
-	@echo 'up -d --build' && \
-		cd .devcontainer/ && \
-		docker-compose up -d --build
-	
-in_php:
-	. ./.envrc && \
-	docker exec -it $(APP_NAME)-php bash
+SHELL := /bin/bash
+.PHONY: container-init container-remove
 
-remove_all:
-	@echo 'docker-compose down --rmi all --volumes --remove-orphan'
-		docker-compose down --rmi all --volumes --remove-orphan
+container-init:
+	@chmod +x ./bin/gene_docker_compose_env.sh
+	@./bin/setup_docker_environment.sh
 
-clean-none-images:
-    docker rmi $(docker images -f "dangling=true" -q)
+container-remove:
+	@chmod +x ./bin/reset_docker_environment.sh
+	@sudo ./bin/reset_docker_environment.sh
