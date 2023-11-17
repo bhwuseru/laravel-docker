@@ -559,15 +559,6 @@ vendor/bin/phpunit tests/Feature/ExampleTest.php
     make container-remove 
     ```
 
-`setup_docker_environment.sh`のみsudo権限付与しないで実行する。<br>
-**sudoで実行すると${HOME}がルートパスになるため注意**
-
-1. `.envrc`ファイルの環境変数を設定
-2. EnvLaravelディレクトリ直下で実行する。立ち上げは下記コマンドを実行
-- `bash ./bin/setup_docker_environment.sh`
-3. EnvLaravelディレクトリ直下で実行する。立ち上げた環境を初期状態に戻す
-- `sudo bash ./bin/reset_docker_environment.sh `
-
 ## Dockerコマンド
 
 コンテナ削除などのコマンド
