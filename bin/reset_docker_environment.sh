@@ -5,7 +5,7 @@
 
 # .envrcを読み込み、プロジェクトディレクトリに移動
 source .envrc && \
-cd .${PROJECT_NAME}
+cd ."${PROJECT_NAME}" 
 
 # docker-composeの場合
 if  type "docker-compose" &>/dev/null; then
@@ -30,4 +30,4 @@ fi
 rm -rf './db/data' && rm -f './db/init/init.sql' && rm -f ".env" && \
 # プロジェクトディレクトリを元に戻す
 cd ../ && \
-mv "${PROJECT_ROOT}/.${PROJECT_NAME}" "${PROJECT_ROOT}/.devcontainer"
+mv "${PROJECT_NAME_DIR_PATH}" "${PROJECT_ROOT}/.devcontainer"

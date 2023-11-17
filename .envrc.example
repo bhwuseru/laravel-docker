@@ -4,12 +4,15 @@
 export NODEJS_VERSION='18.x'
 export LARAVEL_VERSION='9.*'
 export PROJECT_ROOT=$(pwd)
+# プロジェクト名
+export PROJECT_NAME=sample
 # この環境変数にプロジェクトのマウント先のディレクトリパスを記述する
 # このパスがDockerのnodeコンテナのエントリーポイントとなる
-export VOLUME_PATH=${HOME}/projects
-export PROJECT_NAME=
-export APP_NAME=
-export DB_DATABASE=
+export VOLUME_PATH="${HOME}/projects"
+# .devcontainerから$PROJECT_NAMEの置き換わるパス
+export PROJECT_NAME_DIR_PATH="${PROJECT_ROOT}/.${PROJECT_NAME}"
+export APP_NAME="$PROJECT_NAME"
+export DB_DATABASE="${PROJECT_NAME}_db"
 export DB_USER=user
 export DB_PASSWORD=password
 export USER=user
@@ -19,16 +22,16 @@ export MEMORY_LIMIT=128M
 export UPLOAD_LIMIT=64M
 
 # PhpMyadmin servic 公開側ポート
-export PHP_MYADMIN_PUBLIC_PORT=
+export PHP_MYADMIN_PUBLIC_PORT=18080
 # proxy service 公開側ポート
-export PROXY_PUBLIC_PORT=
-# php artisan serveのポート docker-compose.ymlのphpサービスとphp/Dockerfile内のコメントアウトを外す
-export PHP_SERVE_PORT=
-export PROXY_SSH_PORT=
-# viteのポートを利用する場合はdocker-compose.ymlのphpサービスとphp/DockerfileのExposeコメントアウトを外す
-export VITE_PORT=
-# Reactのポート番号を利用する場合はdocker-compose.ymlのphpサービスのコメントアウトを外す
-export REACT_PORT= 
+export PROXY_PUBLIC_PORT=18081
+# php artisan serveのポート docker-compose.ymlのphpサービスで使用する
+export PHP_SERVE_PORT=18082
+export PROXY_SSH_PORT=18083
+# viteのポートを利用する場合はdocker-compose.ymlのphpサービスで使用する
+export VITE_PORT=18084
+# Reactのポート番号を利用する場合はdocker-compose.ymlのphpサービスで使用する
+export REACT_PORT=18085
 
 ## gitセットアップスクリプトで利用する環境変数 ##
 # レポジトリ
