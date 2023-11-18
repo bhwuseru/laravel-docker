@@ -19,10 +19,8 @@ fi
 DOCKER_ENVFILE_PATH="${PROJECT_NAME_DIR_PATH}/.env"
 
 # docker-composeの.envファイルが存在しない場合は作成
-[ ! -f "$DOCKER_ENVFILE_PATH" ] && echo "PROJECT_NAME=${PROJECT_NAME}" > "$DOCKER_ENVFILE_PATH"
-
-# docker-composeの.envファイルを生成
-{
+[ ! -f "$DOCKER_ENVFILE_PATH" ] && {
+  echo "PROJECT_NAME=${PROJECT_NAME}" 
   echo "VOLUME_PATH=${VOLUME_PATH}"
   echo "NODEJS_VERSION=${NODEJS_VERSION}"
   echo "LARAVEL_VERSION=${LARAVEL_VERSION}"
