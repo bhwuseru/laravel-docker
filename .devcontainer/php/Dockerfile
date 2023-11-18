@@ -56,14 +56,14 @@ RUN npm install -g yarn
 
 # 一般権限のユーザーを追加
 RUN useradd -m ${USER} --uid 1000
-RUN usermod -aG sudo ${USER}
+RUN gpasswd -a ${USER} sudo
 RUN echo "${USER}:${PASSWORD}" | chpasswd
 
 # sudo実行時のパスワード入力を省略
 RUN echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER}
 
-# 作業ディレクトリに移動
-WORKDIR /var/www/html
-
 # ユーザーの切替 USER ${USER}
 USER ${USER}
+
+#　作業ディレクトリに移動
+WORKDIR /var/www/html
