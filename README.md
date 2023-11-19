@@ -21,57 +21,22 @@
   - [自動化スクリプト](#自動化スクリプト)
   - [Dockerコマンド](#dockerコマンド)
 
-## 置くところ
-volumeをCドライブとかとやり取りするとめちゃくちゃ重いのでwslのlinuxの中の、homeとかに置くといいらしい。<br>
-なので `\\wsl.localhost\Ubuntu\home\●linuxのユーザ名●\` の下にprojectのファイル置き場みたいのを作って置いたらいいと思う。<br>
-例 `\\wsl.localhost\Ubuntu\home\●linuxのユーザ名●\projects\someproject` の中に、下記構造物を入れる。<br>
-上のパスの someproject が下記例で言うところの ｢/projectフォルダ｣。
+# 置くところ
+volumeをCドライブとかとやり取りするとめちゃくちゃ重いのでwslのlinuxの中の、homeとかに置くといいらしい。
 
-### 構造
-```
-/projectフォルダ
-    .devcontainer/
-        db/
-            Dockerfile
-            my.cnf
-        php/
-            Dockerfile
-            php.ini
-        phpMyAdmin/
-            Dockerfile
-            php.ini
-        proxy/
-            Dockerfile
-            default.conf.template
-        .env
-        docker-compose.yml
-    docker_volumes/
-        db/
-            (何も置かない)
-        php/
-            laravel/
-                (何も置かない)
-            log/
-                (何も置かない)
-        proxy/
-            ssl/
-                (ホスト側で生成した秘密鍵を置く。 localhost-key.pem と localhost.pem 、 など)
-```
-
-## dockerでSSLをつかう(windowsの方法)
+# dockerでSSLをつかう(windowsの方法)
 参考 https://shimota.app/windows環境にhttps-localhost-環境を作成する/
 - https://chocolatey.org/install でコマンドをコピー
 - powershellを管理者で実行、貼り付け、 `choco list -l` で確認
 - powershellを一旦閉じて再度開けて、 `choco install mkcert` やって `mkcert --install`
 - localhost-key.pem と localhost.pem が実行したディレクトリに落ちてるので保存して使い回す。
+- .devcontainer のうちに、proxyのなかにsslフォルダを作って、上記2つを入れておく
+※ pemのファイルは各環境で違うものが要るので、必要に応じて手動でやる。
 
 
-## Laravelのライブラリ導入とコマンド一覧
-`laravel/README.md`にライブラリ導入手順や`artisan`コマンドの一覧が記述されています。
+# Docker開発環境構築手順
 
-## Docker開発環境構築手順
-
-### Dockerファイル全体構成
+## Dockerファイル全体構成
 
 - .devcontainer/
     - 開発環境で利用する`docker-compse`のリソースが格納。
@@ -82,42 +47,29 @@ volumeをCドライブとかとやり取りするとめちゃくちゃ重いの�
 - .devcontainer/proxy/
     - `docker-compose build`で利用するnginxの設定が格納。
 
-### 必要条件とツールの導入
+## 必要条件とツールの導入
 
 [Docker の公式サイト](https://www.docker.com/)から手順に従って導入し`docker-compose`コマンドを利用できるようにします。
 [docker-composeの詳細](https://docs.docker.com/compose/compose-file/)はリファレンスを参考にしてください。
 [docerk-composeコマンド](https://matsuand.github.io/docs.docker.jp.onthefly/engine/reference/commandline/compose/)はリファレンスを参考にしてください。
 [Dockerプラグイン](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)を導入してください。
 
-### wsl上での構築手順(任意)
+## wsl上での構築手順(任意)
 
-wsl上上では [Dockerインフラ構築](#dockerインフラ構築)前に下記手順を実施(任意)。
+wsl上では [Dockerインフラ構築](#dockerインフラ構築)前に下記手順を実施(任意)。
 
 この手順を踏まなくても[Dockerインフラ構築](#dockerインフラ構築)に移行しても構築は可能。
+1. プロジェクト直下に存在する.envrc.expamleファイルを.envrcにリネーム
+2. `make container-init`を実行
 
-1〜3までの手順を実行すると以下が変更または追加される。
+上記手順を実行すると以下が変更または追加される。
 - `.devcontainer`フォルダが.envrcに設定されている`.${PROJECT_NAME}`にリネームされる。
 - `.${PROJECT_NAME}/db/init/init.sql`が生成。
 このファイルは内容は`${PROJECT_NAME}_db`とテスト用DBが定義されたファイルを作成する。
 sqlファイルは.docker-compose.ymlで利用される。
-- `.${PROJECT_NAME}/.env`ファイルを作成する。ファイル内容は`.envrc`で定義したポートなど設定ファイルとして作成される。
+- `.${PROJECT_NAME}/.env`ファイルが作成される。ファイル内容は`.envrc`で定義したポートなど設定ファイルとして作成される。
 
-
-1. プロジェクト直下に存在する.envrc.expamleファイルを.envrcにリネーム
-2. .envrcファイル内の環境変数のポート番号などを設定する。<br>このファイルは後述3のシェルスクリプトが参照する。<br>
-`.envrcファイル
-    ```
-    VOLUME_PATH=${HOME}/projects
-    ```
-
-    上記の設定したプロジェクトのルートディレクトリパスがコンテナエントリーポイントになる。<br>
-    この環境変数のパス配下${PROJECT_NAME}ディレクトリがLaravelのプロジェクトのディレクトリになる。
-
-3. `bash ./bin/gene_docker_compose_env`を実行
-    実行するとプロジェクト直下の.devcontainerフォルダが.envrcで定義されている`.${PROJECT_NAME}`名に置き換わる。
-    このスクリプトは`.${PROJECT_NAME}/.env`が新たに生成し`.envrc`で定義した環境変数が設定される。
-
-### Dockerインフラ構築
+## Dockerインフラ構築
 1. `.devcontainer`ディレクトリ下で`.env`ファイルを作成し`env.example`の内容をコピーします。
 2. 作成した`.env`ファイルを作成するアプリケーションに応じて編集します。<br>
     編集後に[自動化スクリプト](#自動化スクリプト)を参照し実行すると自動でコンテナが立ち上がる。<br>
@@ -181,25 +133,22 @@ sqlファイルは.docker-compose.ymlで利用される。
     ```
 
 1. `/.devcontainer`ディレクトリに移動し`docker-compose up -d --build`を実行。
- 
+
  **ビルドができない。コンテナが起動しない場合。**
  - `for proxy Cannot start service proxy: Mounts denied:`が出力された場合
     DockerアプリのPreferences > Resources > File sharing設定にプロジェクトディレクトリのパスを追加。
 - Apply & Restartボタンで再起動。
 
-- `Service 'node' failed to build: failed to register layer: Error processing tar file(exit status 1): write /usr/local/bin/node: no space left on device` 
+- `Service 'node' failed to build: failed to register layer: Error processing tar file(exit status 1): write /usr/local/bin/node: no space left on device`
 - 容量が足りないため、下記コマンドでキャッシュファイルを削除
 `docker builder prune`
 
-
-
-
-### 複数コンテナを稼働させる場合
+## 複数コンテナを稼働させる場合
 1. ルートディレクトリ下の`.devcontainer`ディレクトリ名を任意の名前変更。
     上記のディレクトリ名がcomposeのコンテナ名になるので複数立ち上げる場合は重複させないようにディレクトリ名を変更する。
 **コンテナを複数立ち上げる場合はブラウザからアクセスするポート番号を重複しないように変更する。**
 
-### 起動しなくなった場合
+## 起動しなくなった場合
 - 起動しない
     1. `.devcontainer/`下で `docker-compose down --rmi all --volumes`を実行。
     2. `.devcontainer/db/data`ディレクトリ(存在する場合は)削除
@@ -221,13 +170,13 @@ sqlファイルは.docker-compose.ymlで利用される。
 
     上記`"credsStore"`のsを除外し`docker-compose build --no-cache`を実行
 
-### コンテナ立ち上げ後に`.devcotainer/.env`を編集した場合
+## コンテナ立ち上げ後に`.devcotainer/.env`を編集した場合
 
 1. 画面左の[Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)パネルをクリック。
 2. 対象のコンテナをクリックしCompose Downを実行。
 3. `docker-compose up -d --build`を実行。
 
-### コンテナ内での作業
+# コンテナ内での作業
 [Dockerプラグイン](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) 導入。
 
 - エディタ画面左側にDocdkrのアイコンが表示されます。
@@ -238,7 +187,10 @@ sqlファイルは.docker-compose.ymlで利用される。
     - Attach Visual Studio Code と表示されている箇所をクリックしたとき
     →VSCodeの新しいウィンドウがコンテナ内に開きます。
 
-### プロジェクトの作成とLaravel環境設定
+## Laravelのライブラリ導入とコマンド一覧
+`laravel/README.md`にライブラリ導入手順や`artisan`コマンドの一覧が記述されています。
+
+## プロジェクトの作成とLaravel環境設定
 
 1. “$APP_NAME名”(.devcontainer/.envファイルに記載)-php コンテナに入る。
 1. 新規プロジェクトの場合は/var/wwwディレクトリで以下コマンドを実行
@@ -274,7 +226,7 @@ sqlファイルは.docker-compose.ymlで利用される。
 
 ```
 VITE_PORT= # php artisan serveで動かす場合にviteで構築されたファイルを読み込むために必要
-PHP_SERVE_PORT= 
+PHP_SERVE_PORT=
 ```
 
 2. docker-compose.ymlファイル内: phpサービスの下記コメントアウトを外す。
@@ -366,7 +318,7 @@ welcome.blade.php返却->localhost:5173に存在するリソースにアクセ�
 
 server: {
          //　docker-composeの.envで定義した${VITE_PORT}を指定。
-        port: 
+        port:
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 ```
 
@@ -556,7 +508,7 @@ vendor/bin/phpunit tests/Feature/ExampleTest.php
     ```
 - docker-composeの環境を一旦削除して初期状態に戻したい場合は以下を実行する。
     ```
-    make container-remove 
+    make container-remove
     ```
 
 ## Dockerコマンド
