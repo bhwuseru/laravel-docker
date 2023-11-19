@@ -25,14 +25,31 @@
 volumeをCドライブとかとやり取りするとめちゃくちゃ重いのでwslのlinuxの中の、homeとかに置くといいらしい。
 
 # dockerでSSLをつかう(windowsの方法)
-参考 https://shimota.app/windows環境にhttps-localhost-環境を作成する/
+## 作る
+一回作ったら使い回す。<br>
+参考 https://shimota.app/windows環境にhttps-localhost-環境を作成する/<br>
 - https://chocolatey.org/install でコマンドをコピー
 - powershellを管理者で実行、貼り付け、 `choco list -l` で確認
 - powershellを一旦閉じて再度開けて、 `choco install mkcert` やって `mkcert --install`
 - localhost-key.pem と localhost.pem が実行したディレクトリに落ちてるので保存して使い回す。
+## 使う
 - .devcontainer のうちに、proxyのなかにsslフォルダを作って、上記2つを入れておく
 ※ pemのファイルは各環境で違うものが要るので、必要に応じて手動でやる。
-
+- docker-compose.yml のなかのssl使うときは…の2箇所をアンコメント
+- .devcontainer/proxy/default.conf.template の
+    - 443の2箇所をアンコメント
+    - ssl_certificateの2箇所をアンコメント
+    - 80番から強制的に転送するなら
+    ```
+    server {
+        listen       80;
+        return 301 https://$host:${PROXY_SSL_PORT}$request_uri;
+    }
+    server {
+        listen 443 ssl;
+    ...
+    ```
+    て感じに切り離しておくといける。
 
 # Docker開発環境構築手順
 
