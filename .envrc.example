@@ -27,7 +27,7 @@ export PHP_MYADMIN_PUBLIC_PORT=18080
 export PROXY_PUBLIC_PORT=18081
 # php artisan serveのポート docker-compose.ymlのphpサービスで使用する
 export PHP_SERVE_PORT=18082
-export PROXY_SSH_PORT=18083
+export PROXY_SSL_PORT=18083
 # viteのポートを利用する場合はdocker-compose.ymlのphpサービスで使用する
 export VITE_PORT=18084
 # Reactのポート番号を利用する場合はdocker-compose.ymlのphpサービスで使用する
