@@ -6,11 +6,12 @@ export LARAVEL_VERSION='9.*'
 export PROJECT_ROOT=$(pwd)
 # プロジェクト名
 export PROJECT_NAME=sample
-# この環境変数にプロジェクトのマウント先のディレクトリパスを記述する
-# このパスがDockerのnodeコンテナのエントリーポイントとなる
-export VOLUME_PATH="${HOME}/projects"
 # .devcontainerから$PROJECT_NAMEの置き換わるパス
 export PROJECT_NAME_DIR_PATH="${PROJECT_ROOT}/.${PROJECT_NAME}"
+# この環境変数にプロジェクトのマウント先のディレクトリパスを記述する
+# このパスがDockerのnodeコンテナのエントリーポイントとなる
+export VOLUME_PATH="${PROJECT_NAME_DIR_PATH}/php/html" 
+
 export APP_NAME="$PROJECT_NAME"
 export DB_DATABASE="${PROJECT_NAME}_db"
 export DB_USER=user
