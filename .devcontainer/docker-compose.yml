@@ -85,3 +85,36 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       TZ: Asia/Tokyo
+  db-test:
+    # platform: 'linux/amd64'
+    container_name: ${APP_NAME}-db-test
+    build:
+      context: ./db-test
+      dockerfile: Dockerfile
+    volumes:
+      - ./db-test/log:/var/log/mysql
+      - ./db-test/data:/var/lib/mysql
+      - ./db-test/init:/docker-entrypoint-initdb.d
+    expose:
+      - "3306"
+    tty: true
+    environment:
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}_testing
+      MYSQL_USER: ${DB_USER}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      TZ: Asia/Tokyo
+  phpmyadmin-test:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: ${APP_NAME}-phpmyadmin-test
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: db-test
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_PASSWORD}
+      MEMORY_LIMIT: ${MEMORY_LIMIT}
+      UPLOAD_LIMIT: ${UPLOAD_LIMIT}
+    depends_on:
+      - db
+    ports:
+      - ${PHP_MYADMIN_TEST_PUBLIC_PORT}:80

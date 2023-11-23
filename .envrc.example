@@ -22,17 +22,20 @@ export USER=user
 export MEMORY_LIMIT=128M
 export UPLOAD_LIMIT=64M
 
-# PhpMyadmin servic 公開側ポート
+# PhpMyadmin db 公開側ポート
 export PHP_MYADMIN_PUBLIC_PORT=18080
+# PhpMyadmin test db 公開側ポート
+export PHP_MYADMIN_TEST_PUBLIC_PORT=18081
 # proxy service 公開側ポート
-export PROXY_PUBLIC_PORT=18081
-# php artisan serveのポート docker-compose.ymlのphpサービスで使用する
-export PHP_SERVE_PORT=18082
+export PROXY_PUBLIC_PORT=18082
 export PROXY_SSL_PORT=18083
+
+# php artisan serveのポート docker-compose.ymlのphpサービスで使用する
+export PHP_SERVE_PORT=18084
 # viteのポートを利用する場合はdocker-compose.ymlのphpサービスで使用する
-export VITE_PORT=18084
+export VITE_PORT=18085
 # Reactのポート番号を利用する場合はdocker-compose.ymlのphpサービスで使用する
-export REACT_PORT=18085
+export REACT_PORT=18086
 
 ## gitセットアップスクリプトで利用する環境変数 ##
 # レポジトリ

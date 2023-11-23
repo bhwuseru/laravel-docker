@@ -35,18 +35,20 @@ DOCKER_ENVFILE_PATH="${PROJECT_NAME_DIR_PATH}/.env"
   echo "REACT_PORT=${REACT_PORT}"
   echo "PHP_SERVE_PORT=${PHP_SERVE_PORT}"
   echo "PHP_MYADMIN_PUBLIC_PORT=${PHP_MYADMIN_PUBLIC_PORT}"
+  echo "PHP_MYADMIN_TEST_PUBLIC_PORT=${PHP_MYADMIN_TEST_PUBLIC_PORT}"
   echo "NODE_PORT=${NODE_PORT}"
   echo "MEMORY_LIMIT=${MEMORY_LIMIT}"
   echo "UPLOAD_LIMIT=${UPLOAD_LIMIT}"
 } > "$DOCKER_ENVFILE_PATH"
 
 
-# 初期化時にdb/dataディレクトリは削除する
+# 初期化時にdb/dataとdb-test/dataディレクトリは削除する
 [ -d "${PROJECT_NAME_DIR_PATH}/db/data" ] && rm -rf "${PROJECT_NAME_DIR_PATH}/db/data"
+[ -d "${PROJECT_NAME_DIR_PATH}/db-test/data" ] && rm -rf "${PROJECT_NAME_DIR_PATH}/db-test/data"
 
 # SQLファイル作成
 DB_INIT_SQLFILE_PATH="${PROJECT_NAME_DIR_PATH}/db/init/init.sql"
-echo "CREATE DATABASE IF NOT EXISTS ${DB_DATABASE} CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;" > "$DB_INIT_SQLFILE_PATH"
+echo "CREATE DATABASE IF NOT EXISTS ${DB_DATABASE} CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;" > "${PROJECT_NAME_DIR_PATH}/db/init/init.sql"
 
 # テスト用SQLファイル作成
-echo "CREATE DATABASE IF NOT EXISTS ${DB_DATABASE}_testing CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;" >> "$DB_INIT_SQLFILE_PATH"
+echo "CREATE DATABASE IF NOT EXISTS ${DB_DATABASE}_testing CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;" > "${PROJECT_NAME_DIR_PATH}/db-test/init/init.sql"
