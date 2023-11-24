@@ -419,8 +419,6 @@ server: {
 ## テスト開発環境設定とDB設定(phpunit.xmlが`<server>`タグの場合)
 ***.env_testingを作成***
  `cp .env .env_testing`
-  .env_testingファイル下記内容を変更
- `cp .env .env_testing`ファイルを作成
  .env_testingの下記を変更または追加
 
     APP_ENV=test
@@ -432,6 +430,7 @@ server: {
     DB_TESTING_USERNAME=user
 
 ***database.phpを編集***
+config/database.php
 
     // mysqlの配列をコピーして貼り付け下記部分を変更
     'mysql_testing' => [　　　　名前変更
@@ -439,6 +438,7 @@ server: {
     ],
 
 ****phpunitファイルの編集****
+phpunit.xml
     phpunitを実行する際に使用するデータベースを設定。
 
         <php>
@@ -490,7 +490,8 @@ class ExampleTest extends TestCase
 下記のコマンドを実行します。
 
 ```php
-php artisan config:clear　　キャッシュ消してから
+キャッシュ消してから
+php artisan config:clear
 
 vendor/bin/phpunit
 
