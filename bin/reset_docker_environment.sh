@@ -28,7 +28,7 @@ fi
 
 # データディレクトリ、初期化SQLファイル、.envファイルを削除
 # rm -rf './db/data' && rm -f './db/init/init.sql' && rm -f ".env" && \
-rm -rf './db/data' && rm -rf './db/log' && rm -f './db/init/init.sql' && rm -rf './db-test' && rm -f ".env" && \
+rm -rf './db/data' && rm -rf './db/log' && rm -f './db/init/init.sql' && rm -f ".env" && \
 # プロジェクトディレクトリを元に戻す
 cd ../ && \
 mv "${PROJECT_NAME_DIR_PATH}" "${PROJECT_ROOT}/.devcontainer"
