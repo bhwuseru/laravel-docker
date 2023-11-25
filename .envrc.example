@@ -25,13 +25,16 @@ export UPLOAD_LIMIT=64M
 export PHP_MYADMIN_PUBLIC_PORT=18080
 # proxy service 公開側ポート
 export PROXY_PUBLIC_PORT=18081
+export PROXY_SSL_PORT=18083
 # php artisan serveのポート docker-compose.ymlのphpサービスで使用する
 export PHP_SERVE_PORT=18082
-export PROXY_SSL_PORT=18083
 # viteのポートを利用する場合はdocker-compose.ymlのphpサービスで使用する
 export VITE_PORT=18084
 # Reactのポート番号を利用する場合はdocker-compose.ymlのphpサービスで使用する
 export REACT_PORT=18085
+# 各db service ポート
+export DB_PORT=18086
+export DB_TEST_PORT=18087
 
 ## gitセットアップスクリプトで利用する環境変数 ##
 # レポジトリ

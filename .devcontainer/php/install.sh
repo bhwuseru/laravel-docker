@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo 'run install.sh ' >> history.log
 # プロジェクトディレクトリが存在しない場合はlaravelを新規インストール
