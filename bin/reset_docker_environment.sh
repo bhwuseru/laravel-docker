@@ -5,7 +5,7 @@
 
 # .envrcを読み込み、プロジェクトディレクトリに移動
 source .envrc && \
-cd ."${PROJECT_NAME}" 
+cd ."${PROJECT_NAME}"
 
 # docker-composeの場合
 if  type "docker-compose" &>/dev/null; then
@@ -15,7 +15,7 @@ if  type "docker-compose" &>/dev/null; then
 elif docker compose version | grep -q Docker; then
     #  docker composeを使って現在の環境を停止
     docker compose down
-else 
+else
     return;
 fi
 
@@ -27,7 +27,8 @@ if [ -n "$none_images" ]; then
 fi
 
 # データディレクトリ、初期化SQLファイル、.envファイルを削除
-rm -rf './db/data' && rm -f './db/init/init.sql' && rm -f ".env" && \
+# rm -rf './db/data' && rm -f './db/init/init.sql' && rm -f ".env" && \
+rm -rf './db/data' && rm -rf './db/log' && rm -f './db/init/init.sql' && rm -f ".env" && \
 # プロジェクトディレクトリを元に戻す
 cd ../ && \
 mv "${PROJECT_NAME_DIR_PATH}" "${PROJECT_ROOT}/.devcontainer"
