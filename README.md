@@ -35,21 +35,7 @@ volumeをCドライブとかとやり取りするとめちゃくちゃ重いの�
 ## 使う
 - .devcontainer のうちに、proxyのなかにsslフォルダを作って、上記2つを入れておく
 ※ pemのファイルは各環境で違うものが要るので、必要に応じて手動でやる。
-- docker-compose.yml のなかのssl使うときは…の2箇所をアンコメント
-- .devcontainer/proxy/default.conf.template の
-    - 443の2箇所をアンコメント
-    - ssl_certificateの2箇所をアンコメント
-    - 80番から強制的に転送するなら
-    ```
-    server {
-        listen       80;
-        return 301 https://$host:${PROXY_SSL_PORT}$request_uri;
-    }
-    server {
-        listen 443 ssl;
-    ...
-    ```
-    て感じに切り離しておくといける。
+- docker-compose.yml の中の services→proxy→volumes で、default.conf.templateを設定してる箇所。SSLを使うときは `./proxy/default.conf.templateForSSL` の方をアンコメントで活性化、 `./proxy/default.conf.template` をコメントアウトで不活化。
 
 # Docker開発環境構築手順
 
@@ -347,7 +333,7 @@ server: {
     ```
 
 2. テストコード下記を追加して検証。
- 
+
     ```
     php artisan make:controller UserController --test
     ```
