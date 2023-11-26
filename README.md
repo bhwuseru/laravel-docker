@@ -340,62 +340,53 @@ server: {
 ```
 
 ## テスト開発環境設定とDB設定(phpunit.xmlが`<env>`タグの場合)
-1. .env.exampleをコピーして.env.testingを作成する。
-    ```
-    cp .env.example .env.testing
-    ``````
-2. キーを作成
-    ```
-    php artisan key:generate --env=testing
-    ```
-3. .env.testingファイルの下記を変更。
-    ```
-    APP_ENV=testing
-    DB_DATABASE=テストDB
-    ```
-4. phpunit.xmlファイルの下記を変更。
+
+1. phpunit.xmlファイルの下記を変更。
     ```
     <env name="DB_DATABASE" value="テストDB"/>
     ```
 
-5. テストコードに下記を追加。
+2. テストコード下記を追加して検証。
+ 
     ```
-    use Illuminate\Foundation\Testing\DatabaseMigrations;
-    use Illuminate\Foundation\Testing\DatabaseTransactions;
+    php artisan make:controller UserController --test
+    ```
 
-    class MyTest
-        use DatabaseMigrations;
-        use DatabaseTransactions;
-    ```
-    ```
-        public function setUp(): void
+	```
+    use App\Models\User;
+
+    class UserController extends Controller
+    {
+        public function index()
         {
-            parent::setUp();
+            $users = User::all();
 
-            Artisan::call('migrate:fresh --seed');
+            return view('users.index', compact('users'));
         }
+    }
     ```
 
-6. 下記は例
+
+    ```
+    @foreach($users as $user)
+        {{ $user->name }}
+    @endforeach
+    ```
+
+    ```
+    Route::get('users', [UserController::class, 'index']);
+    ```
+
     ```
     <?php
 
     use App\Models\User;
-    use Illuminate\Foundation\Testing\DatabaseMigrations;
-    use Illuminate\Foundation\Testing\DatabaseTransactions;
+    use Illuminate\Foundation\Testing\RefreshDatabase;
     use Tests\TestCase;
 
     class UserControllerTest extends TestCase
     {
-        use DatabaseMigrations;
-        use DatabaseTransactions;
-
-        public function setUp(): void
-        {
-            parent::setUp();
-
-            Artisan::call('migrate:fresh --seed');
-        }
+        use RefreshDatabase;
 
         /**
         * @test
