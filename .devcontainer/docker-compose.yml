@@ -72,7 +72,6 @@ services:
       context: ./db
       dockerfile: Dockerfile
     volumes:
-      - ./db/log:/var/log/mysql
       - ./db/data:/var/lib/mysql
       - ./db/init:/docker-entrypoint-initdb.d
     expose:
