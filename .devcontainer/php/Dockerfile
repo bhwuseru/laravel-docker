@@ -21,7 +21,7 @@ ENV TZ=Asia/Tokyo
 COPY php.ini /usr/local/etc/php/php.ini
 
 # パッケージのインストール
-RUN apt-get update \
+RUN apt-get clean && apt-get update \
     && apt-get install -y \
     git \
     zip \
