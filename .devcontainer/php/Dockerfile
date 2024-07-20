@@ -14,6 +14,11 @@ ENV PROJECT_NAME=${PROJECT_NAME}
 ENV USER=${USER}
 ENV PASSWORD=${PASSWORD}
 
+# ロケール設定
+ENV LANG ja_JP.UTF-8
+ENV LANGUAGE ja_JP:jp
+ENV LC_ALL ja_JP.UTF-8
+
 # タイムゾーンを設定
 ENV TZ=Asia/Tokyo
 
@@ -23,6 +28,7 @@ COPY php.ini /usr/local/etc/php/php.ini
 # パッケージのインストール
 RUN apt-get clean && apt-get update \
     && apt-get install -y \
+    locales \
     git \
     zip \
     unzip \
@@ -36,6 +42,8 @@ RUN apt-get clean && apt-get update \
     libfontconfig1 \
     libxrender1 \
     libicu-dev \
+    && echo "ja_JP.UTF-8 UTF-8" > /etc/locale.gen \
+    && locale-gen ja_JP.UTF-8 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
@@ -62,8 +70,8 @@ RUN echo "${USER}:${PASSWORD}" | chpasswd
 # sudo実行時のパスワード入力を省略
 RUN echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER}
 
-# ユーザーの切替 USER ${USER}
+# ユーザーの切替
 USER ${USER}
 
-#　作業ディレクトリに移動
+# 作業ディレクトリに移動
 WORKDIR /var/www/html
