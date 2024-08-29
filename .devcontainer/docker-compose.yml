@@ -48,6 +48,17 @@ services:
       - ./php/log/:/var/log/php/
     tty: true
 
+  mail:
+    image: mailhog/mailhog
+    container_name: ${APP_NAME}-mailhog
+    ports:
+      - "${MAILHOG_PORT}:8025"
+    environment:
+      MH_STORAGE: maildir
+      MH_MAILDIR_PATH: /tmp
+    volumes:
+      - ./mail:/tmp
+
   Phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: ${APP_NAME}-phpmyadmin

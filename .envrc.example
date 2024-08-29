@@ -1,8 +1,8 @@
 # docker-compose.yml設定
 
 # Dockerで利用する環境変数 ##
-export NODEJS_VERSION='18.x'
-export LARAVEL_VERSION='9.*'
+export NODEJS_VERSION='20.x'
+export LARAVEL_VERSION='11.*'
 export PROJECT_ROOT=$(pwd)
 # プロジェクト名
 export PROJECT_NAME=sample
@@ -25,16 +25,18 @@ export UPLOAD_LIMIT=64M
 # nginxの設定ファイル .devcontainer/proxy配下の設定ファイル名を指定。
 export PROXY_TEMPLATE_NAME="default.conf.template"
 # PhpMyadmin servic 公開側ポート
-export PHP_MYADMIN_PUBLIC_PORT=18080
+export PHP_MYADMIN_PUBLIC_PORT=19080
 # proxy service 公開側ポート
-export PROXY_PUBLIC_PORT=18081
-export PROXY_SSL_PORT=18083
+export PROXY_PUBLIC_PORT=19081
+export PROXY_SSL_PORT=19083
 # php artisan serveのポート docker-compose.ymlのphpサービスで使用する
-export PHP_SERVE_PORT=18082
+export PHP_SERVE_PORT=19082
 # viteのポートを利用する場合はdocker-compose.ymlのphpサービスで使用する
-export VITE_PORT=18084
+export VITE_PORT=19084
 # Reactのポート番号を利用する場合はdocker-compose.ymlのphpサービスで使用する
-export REACT_PORT=18085
+export REACT_PORT=19085
+# mailhogのポート番号
+export MAILHOG_PORT=19086
 
 ## gitセットアップスクリプトで利用する環境変数 ##
 # レポジトリ
