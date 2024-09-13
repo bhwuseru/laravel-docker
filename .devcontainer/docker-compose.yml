@@ -37,10 +37,12 @@ services:
       - ${PHP_SERVE_PORT}:8000
       - ${VITE_PORT}:${VITE_PORT}
       - ${REACT_PORT}:3000
+      - ${WEBSOCKET_PORT}:${WEBSOCKET_PORT}
     expose:
       - "3000"
       - "8000"
       - "${VITE_PORT}"
+      - "${WEBSOCKET_PORT}"
     depends_on:
       - db
     volumes:
