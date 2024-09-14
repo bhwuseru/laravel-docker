@@ -46,7 +46,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ${VOLUME_PATH}/:/var/www/html
+      - ${VOLUME_PATH}/:/home/${USER}
       - ./php/log/:/var/log/php/
     tty: true
 

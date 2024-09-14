@@ -76,4 +76,4 @@ RUN echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER}
 USER ${USER}
 
 # 作業ディレクトリに移動
-WORKDIR /var/www/html
+WORKDIR /home/${USER}
