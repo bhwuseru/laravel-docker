@@ -65,7 +65,7 @@ RUN apt-get install -y nodejs
 RUN npm install -g yarn
 
 # 一般権限のユーザーを追加
-RUN useradd -m ${USER} --uid 1000
+RUN useradd -m -s /bin/bash ${USER} --uid 1000
 RUN gpasswd -a ${USER} sudo
 RUN echo "${USER}:${PASSWORD}" | chpasswd
 

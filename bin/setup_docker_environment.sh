@@ -21,6 +21,12 @@ if [ ! -e "${VOLUME_PATH}/install.sh" ]; then
     cp "${PROJECT_NAME_DIR_PATH}/php/install.sh" "${VOLUME_PATH}/"
 fi
 
+# .bashrcがボリューム先のディレクトリパスに存在するかチェック
+if [ ! -e "${VOLUME_PATH}/.bashrc" ]; then
+    # .bashrcをボリューム先ディレクトリパスにコピーする
+    cp "${PROJECT_NAME_DIR_PATH}/php/.bashrc" "${VOLUME_PATH}/"
+fi
+
 cd ."${PROJECT_NAME}" || return
 
 # dangling Dockerイメージの削除
