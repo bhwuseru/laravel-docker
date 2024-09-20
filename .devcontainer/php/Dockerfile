@@ -25,10 +25,14 @@ ENV TZ=Asia/Tokyo
 # ローカルからDocker環境にファイルをコピー
 COPY php.ini /usr/local/etc/php/php.ini
 
+# パッケージのインストール前に追加
+SHELL ["/bin/bash", "-c"]
+
 # パッケージのインストール
 RUN apt-get clean && apt-get update \
     && apt-get install -y \
     locales \
+    procps \
     git \
     zip \
     unzip \
@@ -72,8 +76,13 @@ RUN echo "${USER}:${PASSWORD}" | chpasswd
 # sudo実行時のパスワード入力を省略
 RUN echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER}
 
+# .bashrcをコピー
+COPY .bashrc /home/${USER}/.bashrc
 # ユーザーの切替
 USER ${USER}
 
 # 作業ディレクトリに移動
-WORKDIR /home/${USER}
+WORKDIR /var/www/html
+
+# bashに切り替え
+RUN /bin/bash
