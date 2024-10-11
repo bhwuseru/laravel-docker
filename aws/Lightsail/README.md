@@ -3,8 +3,29 @@
 
 検証環境 LAMP (PHP 8) 8.3.11-0で検証
 
+- [LAMP環境にnodeをインストールする方法](#LAMP環境にnodeをインストールする方法)
 - [Supervisorのインストール方法](#Supervisorのインストール方法)
 - [設定コマンド一覧](#設定コマンド一覧)
+
+## LAMP環境にnodeをインストールする方法
+
+1. node v20をパッケージに追加
+
+    ```
+    curl -sL https://deb.nodesource.com/setup_20.x | bash -
+    ```
+
+2. パッケージからnodeをインストール
+    ```
+    apt install -y nodejs  
+    ```
+
+3. プロジェクト直下のディレクトリで実行
+    ```
+    npm install
+    export NODE_OPTIONS="--max-old-space-size=1024”
+    npm run build
+    ```
 
 ## Supervisorのインストール方法 
 1. パッケージをインストール
