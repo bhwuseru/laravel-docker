@@ -47,7 +47,7 @@
 
     例えば artisan queue:work などを設定する。
 
-    サンプル
+    サンプル `/etc/supervisor/conf.d/setting.conf`
     ```
       [program:laravel_queue_worker]
       command=/opt/bitnami/php/bin/php /path/to/artisan queue:work
@@ -93,6 +93,17 @@
     laravel_queue_worker             RUNNING   pid 37536, uptime 0:00:12
     laravel_reverb_worker            RUNNING   pid 37537, uptime 0:00:12
     ```
+
+7. 動作しない場合の確認
+  - ログの確認 `cat /var/log/supervisor/supervisord.log`
+  - 設定ファイルの確認
+    `/etc/supervisor/supervisord.conf`
+
+    サービス登録の設定ファイルパスが一致しているか確認
+      ```
+      [include]
+      files = /etc/supervisor/conf.d/*.conf
+      ```
 
 ## 設定コマンド一覧
   ```
