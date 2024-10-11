@@ -107,12 +107,16 @@
 
 ## 設定コマンド一覧
   ```
+  # 起動してるか確認
+  sudo supervisorctl status
   # 設定ファイルを再読み込み
   sudo supervisorctl reread 
   # 設定ファイルを反映させジョブ更新
   sudo supervisorctl update
   # サービスを全て停止
   sudo supervisorctl stop all
+  # サービスを開始
+  sudo supervisorctl status
   # 指定のサービスを停止
   sudo supervisorctl stop laravel_queue_worker
   ```
