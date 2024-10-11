@@ -116,7 +116,7 @@
   # サービスを全て停止
   sudo supervisorctl stop all
   # サービスを開始
-  sudo supervisorctl status
+  sudo supervisorctl start all
   # 指定のサービスを停止
   sudo supervisorctl stop laravel_queue_worker
   ```
