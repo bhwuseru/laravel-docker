@@ -48,3 +48,14 @@ DOCKER_ENVFILE_PATH="${PROJECT_NAME_DIR_PATH}/.env"
 
 # SQLファイル作成
 echo "CREATE DATABASE IF NOT EXISTS \`${DB_DATABASE}_test\` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci; GRANT ALL PRIVILEGES ON \`${DB_DATABASE}_test\`.* TO '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}'; FLUSH PRIVILEGES;" > "${PROJECT_NAME_DIR_PATH}/db/init/init.sql"
+
+# mkcertが存在しない場合はインストール 
+if ! type mkcert > /dev/null 2>&1; then
+    sudo apt install -y mkcert
+fi
+
+# pemが存在しない場合は生成
+if [[ ! -f "${PROJECT_NAME_DIR_PATH}/proxy/localhost.pem" ]]; then
+    echo "localhost.pem が見つかりません。mkcert で作成します。"
+    mkcert -cert-file "${PROJECT_NAME_DIR_PATH}/proxy/ssl/localhost.pem" -key-file "${PROJECT_NAME_DIR_PATH}/proxy/ssl/localhost-key.pem" localhost
+fi

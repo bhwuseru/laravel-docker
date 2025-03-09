@@ -23,7 +23,7 @@ export MEMORY_LIMIT=128M
 export UPLOAD_LIMIT=64M
 
 # nginxの設定ファイル .devcontainer/proxy配下の設定ファイル名を指定。
-export PROXY_TEMPLATE_NAME="default.conf.template"
+export PROXY_TEMPLATE_NAME="default.conf.templateForSSL"
 # PhpMyadmin servic 公開側ポート
 export PHP_MYADMIN_PUBLIC_PORT=18080
 # proxy service 公開側ポート
