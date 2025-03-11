@@ -40,6 +40,10 @@ export MAILHOG_PORT=18086
 # Laravel Reverb用 Webソケットのポート番号
 export WEBSOCKET_PORT=18087
 
+# コンテナ内の/etc/hostsにホスト名とIPを紐づけたい場合はdocker-compose.ymlの環境変数つかっている箇所をアンコメントアウトする
+export HOSTNAME=$(hostname).local
+export HOST_IP=
+
 ## gitセットアップスクリプトで利用する環境変数 ##
 # レポジトリ
 export GIT_REPOSITORY=
