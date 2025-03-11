@@ -31,6 +31,7 @@ SHELL ["/bin/bash", "-c"]
 # パッケージのインストール
 RUN apt-get clean && apt-get update \
     && apt-get install -y \
+    libwebp-dev \
     locales \
     procps \
     git \
@@ -50,7 +51,7 @@ RUN apt-get clean && apt-get update \
     && locale-gen ja_JP.UTF-8 \
     && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
 RUN docker-php-ext-install gd
 RUN docker-php-ext-install bcmath
 RUN docker-php-ext-install pdo_mysql mysqli exif intl zip

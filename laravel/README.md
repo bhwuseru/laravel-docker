@@ -105,6 +105,10 @@ PHP_SERVE_PORT=
                 refresh: true,
             }),
         ],
+        build: {
+            //　docker-composeの.envで定義した${VITE_PORT}を指定。
+            port:  ${VITE_PORT},
+        },
         server: {
             //　docker-composeの.envで定義した${VITE_PORT}を指定。
             port: ${VITE_PORT},
