@@ -30,26 +30,48 @@ SHELL ["/bin/bash", "-c"]
 
 # パッケージのインストール
 RUN apt-get clean && apt-get update \
-    && apt-get install -y \
-    libwebp-dev \
-    locales \
-    procps \
-    git \
-    zip \
-    unzip \
-    vim \
-    sudo \
-    libfreetype6-dev \
-    libzip-dev \
-    libjpeg62-turbo-dev \
-    libmcrypt-dev \
-    libpng-dev \
-    libfontconfig1 \
-    libxrender1 \
-    libicu-dev \
-    && echo "ja_JP.UTF-8 UTF-8" > /etc/locale.gen \
-    && locale-gen ja_JP.UTF-8 \
-    && rm -rf /var/lib/apt/lists/*
+  && apt-get install -y \
+  libwebp-dev \
+  locales \
+  procps \
+  git \
+  zip \
+  unzip \
+  vim \
+  sudo \
+  libfreetype6-dev \
+  libzip-dev \
+  libjpeg62-turbo-dev \
+  libmcrypt-dev \
+  libpng-dev \
+  libfontconfig1 \
+  libxrender1 \
+  libicu-dev \
+  # Playwright のブラウザ実行に必要な依存パッケージを追加 
+  libnss3 \
+  libatk1.0-0 \
+  libatk-bridge2.0-0 \
+  libxcomposite1 \
+  libxdamage1 \
+  libxrandr2 \
+  libgbm1 \
+  libasound2 \
+  libxshmfence1 \
+  libxss1 \
+  libgtk-3-0 \
+  libx11-xcb1 \
+  libpangocairo-1.0-0 \
+  fonts-liberation \
+  libappindicator3-1 \
+  libcups2 \
+  xdg-utils \
+  # ここまでが Playwright 向けの追加ライブラリ
+  && echo "ja_JP.UTF-8 UTF-8" > /etc/locale.gen \
+  && locale-gen ja_JP.UTF-8 \
+  && rm -rf /var/lib/apt/lists/*
+
+# gitのエディタをviに設定
+RUN git config --global core.editor "vi"
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
 RUN docker-php-ext-install gd
@@ -66,8 +88,9 @@ RUN cd /usr/bin && curl -s http://getcomposer.org/installer | php && ln -s /usr/
 RUN curl -sL https://deb.nodesource.com/setup_${NODEJS_VERSION} | bash -
 RUN apt-get install -y nodejs
 
-# npm 経由でyarnをインストール
-RUN npm install -g yarn
+# npm 経由でyarnとplaywrightをインストール
+RUN npm install -g yarn playwright \
+  && playwright install --with-deps
 
 # 一般権限のユーザーを追加
 RUN useradd -m -s /bin/bash ${USER} --uid 1000
