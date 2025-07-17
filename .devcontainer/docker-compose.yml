@@ -52,6 +52,7 @@ services:
     volumes:
       - ${VOLUME_PATH}/:/var/www/html
       - ./php/log/:/var/log/php/
+      - ~/.cache/ms-playwright:/home/${USER}/.cache/ms-playwright
     tty: true
     # コンテナ内の/etc/hostsのIPとホスト名を紐づけたい場合はアンコメントアウト
     # extra_hosts:
