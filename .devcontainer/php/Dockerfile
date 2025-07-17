@@ -70,7 +70,6 @@ RUN apt-get clean && apt-get update \
   && locale-gen ja_JP.UTF-8 \
   && rm -rf /var/lib/apt/lists/*
 
-
 # gitのエディタをviに設定
 RUN git config --global core.editor "vi"
 
