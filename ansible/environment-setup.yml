@@ -1,0 +1,69 @@
+- name: Laravel Docker 開発環境初期化
+  hosts: localhost
+  gather_facts: yes
+  vars_files:
+    - vars/secrets.yml
+
+  tasks:
+
+    - name: .devcontainer をプロジェクト名でリネーム
+      command: mv "{{ playbook_dir }}/.devcontainer" "{{ playbook_dir }}/.{{ project_name }}"
+      args:
+        removes: "{{ playbook_dir }}/.devcontainer"
+      when: ansible.builtin.stat.path is not defined or ansible.builtin.stat.path is not string
+
+    - name: .env をテンプレートから生成
+      template:
+        src: templates/env.j2
+        dest: "{{ playbook_dir }}/.{{ project_name }}/.env"
+
+    - name: install.sh を php/html ディレクトリへコピー
+      copy:
+        src: "{{ playbook_dir }}/.{{ project_name }}/php/install.sh"
+        dest: "{{ playbook_dir }}/.{{ project_name }}/php/html/install.sh"
+        mode: '0755'
+
+    - name: db/init ディレクトリが存在するか確認（なければ作成）
+      file:
+        path: "{{ playbook_dir }}/.{{ project_name }}/db/init"
+        state: directory
+
+    - name: SQL 初期化ファイルを生成
+      template:
+        src: templates/init.sql.j2
+        dest: "{{ playbook_dir }}/.{{ project_name }}/db/init/init.sql"
+
+    - name: proxy/ssl ディレクトリが存在するか確認（なければ作成）
+      file:
+        path: "{{ playbook_dir }}/.{{ project_name }}/proxy/ssl"
+        state: directory
+
+    - name: mkcertをインストール（macOS）
+      when: ansible_facts['os_family'] == 'Darwin'
+      community.general.homebrew:
+        name:
+          - mkcert
+          - nss
+        state: present
+
+    - name: mkcertがすでに導入されているかチェック（Ubuntu）
+      when: ansible_facts['os_family'] == 'Debian'
+      command: which mkcert
+      register: mkcert_check
+      ignore_errors: yes
+
+    - name: mkcertをインストール（Ubuntu）
+      when:
+        - ansible_facts['os_family'] == 'Debian'
+        - mkcert_check.rc != 0
+      apt:
+        name: mkcert
+        state: present
+        update_cache: yes
+
+    - name: SSL証明書ファイルの生成（存在しない場合のみ）
+      command: >
+        mkcert -cert-file {{ playbook_dir }}/.{{ project_name }}/proxy/ssl/localhost.pem
+               -key-file {{ playbook_dir }}/.{{ project_name }}/proxy/ssl/localhost-key.pem localhost
+      args:
+        creates: "{{ playbook_dir }}/.{{ project_name }}/proxy/ssl/localhost.pem"

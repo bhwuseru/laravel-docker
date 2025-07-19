@@ -1,0 +1,10 @@
+-- 本番用データベースの作成
+CREATE DATABASE IF NOT EXISTS `{{ project_name }}_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+GRANT ALL PRIVILEGES ON `{{ project_name }}_db`.* TO '{{ db_user }}'@'%' IDENTIFIED BY '{{ db_password }}';
+
+-- テスト用データベースの作成
+CREATE DATABASE IF NOT EXISTS `{{ project_name }}_db_test` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+GRANT ALL PRIVILEGES ON `{{ project_name }}_db_test`.* TO '{{ db_user }}'@'%' IDENTIFIED BY '{{ db_password }}';
+
+-- 権限の反映
+FLUSH PRIVILEGES;
