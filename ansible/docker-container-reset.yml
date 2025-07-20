@@ -5,7 +5,7 @@
     - vars/secrets.yml
 
   vars:
-    project_dir: "{{ playbook_dir }}/.{{ project_name }}"
+    project_dir: "{{ playbook_dir }}/.devcontainer"
 
   tasks:
     - name: .env ファイルが存在するか確認
@@ -67,9 +67,3 @@
         - "{{ project_dir }}/db/init/init.sql"
         - "{{ project_dir }}/.env"
       ignore_errors: yes
-
-    - name: .{{ project_name }} → .devcontainer にリネーム（リセット完了）
-      command: mv "{{ project_dir }}" "{{ playbook_dir }}/.devcontainer"
-      args:
-        removes: "{{ project_dir }}"
-      when: env_file.stat.exists or (project_dir is exists)
