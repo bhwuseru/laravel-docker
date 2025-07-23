@@ -1,0 +1,40 @@
+- name: Docker コンテナ ビルド＆起動
+  hosts: localhost
+  gather_facts: yes
+  vars_files:
+    - vars/secrets.yml
+
+  tasks:
+    - name: Docker Compose コマンドの存在確認（docker-compose または docker compose）
+      block:
+
+        - name: docker-compose の存在を確認
+          command: which docker-compose
+          register: docker_compose_old
+          ignore_errors: true
+
+        - name: docker compose の存在を確認（プラグイン）
+          command: docker compose version
+          register: docker_compose_plugin
+          ignore_errors: true
+
+        - name: Docker Compose（旧式）でビルド＆起動
+          when: docker_compose_old.rc == 0
+          shell: docker-compose build --no-cache && docker-compose up -d
+          args:
+            chdir: "{{ playbook_dir }}/.devcontainer"
+
+        - name: Docker Compose（プラグイン）でビルド＆起動
+          when:
+            - docker_compose_old.rc != 0
+            - docker_compose_plugin.rc == 0
+          shell: docker compose build --no-cache && docker compose up -d
+          args:
+            chdir: "{{ playbook_dir }}/.devcontainer"
+
+        - name: Docker Compose が存在しない場合の通知
+          when:
+            - docker_compose_old.rc != 0
+            - docker_compose_plugin.rc != 0
+          ansible.builtin.debug:
+            msg: "❌ Docker Compose（旧式/プラグイン両方）が見つかりませんでした。"

@@ -1,11 +1,15 @@
 SHELL := /bin/bash
 .PHONY: container-init container-remove
 
+docker-setup-env:
+	@sudo ansible-playbook -i localhost, -c local ansible/environment-setup.yml
+
+container-build-up:
+	@sudo ansible-playbook -i localhost, -c local ansible/docker-build-up.yml
+
 container-init:
-	@chmod +x ./bin/gene_docker_compose_env.sh
-	@chmod +x ./bin/setup_docker_environment.sh
-	@./bin/setup_docker_environment.sh
+	@ansible-playbook -i localhost, -c local ansible/environment-setup.yml && \
+	ansible-playbook -i localhost, -c local ansible/docker-build-up.yml
 
 container-remove:
-	@chmod +x ./bin/reset_docker_environment.sh
-	@sudo ./bin/reset_docker_environment.sh
+	@sudo ansible-playbook -i localhost, -c local ansible/docker-container-reset.yml

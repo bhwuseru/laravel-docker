@@ -1,0 +1,62 @@
+- name: Laravel Docker 開発環境初期化
+  hosts: localhost
+  gather_facts: yes
+  vars_files:
+    - vars/secrets.yml
+
+  tasks:
+    - name: .env をテンプレートから生成
+      template:
+        src: templates/env.j2
+        dest: "{{ playbook_dir }}/.devcontainer/.env"
+
+    - name: install.sh を php/html ディレクトリへコピー
+      copy:
+        src: "{{ playbook_dir }}/.devcontainer/php/install.sh"
+        dest: "{{ playbook_dir }}/.devcontainer/php/html/install.sh"
+        mode: '0755'
+
+    - name: db/init ディレクトリが存在するか確認（なければ作成）
+      file:
+        path: "{{ playbook_dir }}/.devcontainer/db/init"
+        state: directory
+
+    - name: SQL 初期化ファイルを生成
+      template:
+        src: templates/init.sql.j2
+        dest: "{{ playbook_dir }}/.devcontainer/db/init/init.sql"
+
+    - name: proxy/ssl ディレクトリが存在するか確認（なければ作成）
+      file:
+        path: "{{ playbook_dir }}/.devcontainer/proxy/ssl"
+        state: directory
+
+    - name: mkcertをインストール（macOS）
+      when: ansible_facts['os_family'] == 'Darwin'
+      community.general.homebrew:
+        name:
+          - mkcert
+          - nss
+        state: present
+
+    - name: mkcertがすでに導入されているかチェック（Ubuntu）
+      when: ansible_facts['os_family'] == 'Debian'
+      command: which mkcert
+      register: mkcert_check
+      ignore_errors: yes
+
+    - name: mkcertをインストール（Ubuntu）
+      when:
+        - ansible_facts['os_family'] == 'Debian'
+        - mkcert_check.rc != 0
+      apt:
+        name: mkcert
+        state: present
+        update_cache: yes
+
+    - name: SSL証明書ファイルの生成（存在しない場合のみ）
+      command: >
+        mkcert -cert-file {{ playbook_dir }}/.devcontainer/proxy/ssl/localhost.pem
+               -key-file {{ playbook_dir }}/.devcontainer/proxy/ssl/localhost-key.pem localhost
+      args:
+        creates: "{{ playbook_dir }}/.devcontainer/proxy/ssl/localhost.pem"

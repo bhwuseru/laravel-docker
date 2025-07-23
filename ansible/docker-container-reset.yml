@@ -1,0 +1,69 @@
+- name: Laravel Docker 環境のリセット
+  hosts: localhost
+  gather_facts: yes
+  vars_files:
+    - vars/secrets.yml
+
+  vars:
+    project_dir: "{{ playbook_dir }}/.devcontainer"
+
+  tasks:
+    - name: .env ファイルが存在するか確認
+      stat:
+        path: "{{ project_dir }}/.env"
+      register: env_file
+
+    - name: docker-compose（旧式）の存在確認
+      command: which docker-compose
+      register: docker_compose_check
+      ignore_errors: yes
+      changed_when: false
+
+    - name: docker compose（プラグイン）の存在確認
+      command: which docker
+      register: docker_plugin_check
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Docker Compose（旧式）で停止
+      shell: docker-compose down
+      args:
+        chdir: "{{ project_dir }}"
+      when:
+        - env_file.stat.exists
+        - docker_compose_check.rc == 0
+
+    - name: Docker Compose（プラグイン）で停止
+      shell: docker compose down
+      args:
+        chdir: "{{ project_dir }}"
+      when:
+        - env_file.stat.exists
+        - docker_plugin_check.rc == 0
+
+    - name: Docker Compose が存在しない場合の通知
+      debug:
+        msg: "docker compose がインストールされていないか、.env が存在しないため停止スキップ"
+      when: not env_file.stat.exists
+
+    - name: 使用されていない(dangling)イメージを取得
+      shell: docker images -f "dangling=true" -q
+      register: dangling_images
+      changed_when: false
+
+    - name: 未使用のイメージを削除（存在する場合）
+      shell: docker rmi {{ item }}
+      with_items: "{{ dangling_images.stdout_lines }}"
+      when: item != ""
+      ignore_errors: yes
+
+    - name: データベース関連ファイルを削除（data, log, init.sql, .env）
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ project_dir }}/db/data"
+        - "{{ project_dir }}/db/log"
+        - "{{ project_dir }}/db/init/init.sql"
+        - "{{ project_dir }}/.env"
+      ignore_errors: yes
