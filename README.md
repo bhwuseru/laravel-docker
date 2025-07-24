@@ -1,9 +1,6 @@
 # 環境構築資料（Ansible対応版）
 
 - [環境構築資料（Ansible対応版）](#環境構築資料ansible対応版)
-  - [置くところ](#置くところ)
-    - [構造](#構造)
-  - [dockerでSSLをつかう(windowsの方法)](#dockerでsslをつかうwindowsの方法)
   - [Ansible + Docker開発環境構築手順](#ansible--docker開発環境構築手順)
     - [必要条件とツールの導入](#必要条件とツールの導入)
     - [構築手順](#構築手順)
