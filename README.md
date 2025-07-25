@@ -51,7 +51,6 @@ make container-init
 
 このコマンドにより以下が自動実行されます：
 
-- `.devcontainer` → `.{{ project_name }}` にリネーム
 - `.env` ファイルの生成（テンプレートから）
 - `init.sql` の生成（テンプレートから）
 - `proxy/ssl` ディレクトリの作成と pem ファイルの発行（mkcert）
