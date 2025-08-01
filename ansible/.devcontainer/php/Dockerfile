@@ -1,4 +1,4 @@
-FROM --platform=linux/x86_64 php:8.2-fpm
+FROM --platform=linux/x86_64 php:8.4-fpm
 # FROM --platform=linux/x86_64 php:7.4-fpm
 
 # 引数を受け取ってコンテナ内で環境変数を定義
