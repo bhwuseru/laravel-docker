@@ -13,7 +13,7 @@
 
 ## プロジェクトの作成と Laravel 環境設定
 
-1. “$APP_NAME 名”(.devcontainer/.env ファイルに記載)-php コンテナに入る。
+1. “$APP_NAME 名”(docker/.env ファイルに記載)-php コンテナに入る。
 1. 新規プロジェクトの場合は/var/www/html ディレクトリで以下コマンドを実行
    `install.sh`
    または
@@ -25,21 +25,21 @@
     -   `composer install`を実行する。
     -   `php artisan key:generate`を実行する。
 
-1. 作成したプロジェクトに移動し`.env`ファイル内を`.devcontainer/.env`に基づいて下記値に変更する。
+1. 作成したプロジェクトに移動し`.env`ファイル内を`docker/.env`に基づいて下記値に変更する。
 
     ```
-    APP_NAME=`.devcontainer/.env`に記載されているアプリ名
+    APP_NAME=`docker/.env`に記載されているアプリ名
     ...
     DB_CONNECTION=mysql
     DB_HOST=db
     DB_PORT=3306
-    DB_DATABASE=`.devcontainer/.env`に記載されている接続先データベース
+    DB_DATABASE=`docker/.env`に記載されている接続先データベース
     DB_USERNAME=`.devcotainer/.env`に記載されているDBユーザー
     DB_PASSWORD=`.devcotainer/.env`に記載されているパスワード
 
     ```
 
-2. `http://127.0.0.1:{.devcontainer/.env記載のPHP_MYADMIN_PUBLIC_PORT}`で PhpMyAdmin にアクセスできるか確認します。
+2. `http://127.0.0.1:{docker/.env記載のPHP_MYADMIN_PUBLIC_PORT}`で PhpMyAdmin にアクセスできるか確認します。
 3. Git からクローンした場合(プロジェクト新規作成の場合は不要)
    プロジェクトディレクトリ内で`composer install`を実行。
 4. 下記コマンドを実行しマイグレーション・データを作成
@@ -47,7 +47,7 @@
 
 ## Vite 設定
 
-1. .devcontainer/.env ファイル下記変数に任意のポートを設定する
+1. docker/.env ファイル下記変数に任意のポートを設定する
 
 ```
 VITE_PORT= # php artisan serveで動かす場合にviteで構築されたファイルを読み込むために必要
@@ -64,7 +64,7 @@ PHP_SERVE_PORT=
      # VITE_PORT: ${VITE_PORT}
 ```
 
-3. .devcontainer/php/Dockerfile の以下 Vite/php artisan serve 部分のコメントアウトを外す
+3. docker/php/Dockerfile の以下 Vite/php artisan serve 部分のコメントアウトを外す
 
 ```
 # 引数を受け取ってコンテナ内で環境変数を定義

@@ -97,10 +97,10 @@ make container-remove     # コンテナ停止＆データ削除＆初期化状�
 
 ```sh
 # コンテナ停止
-cd .devcontainer && docker compose down
+cd docker && docker compose down
 
 # ボリューム・イメージも含め削除
-cd .devcontainer && docker compose down --rmi all --volumes --remove-orphans
+cd docker && docker compose down --rmi all --volumes --remove-orphans
 
 # 未使用（dangling）イメージ削除
 docker rmi $(docker images -f "dangling=true" -q)

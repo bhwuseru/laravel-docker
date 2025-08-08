@@ -8,27 +8,27 @@
     - name: .env をテンプレートから生成
       template:
         src: templates/env.j2
-        dest: "{{ playbook_dir }}/.devcontainer/.env"
+        dest: "{{ playbook_dir }}/docker/.env"
 
     - name: install.sh を php/html ディレクトリへコピー
       copy:
-        src: "{{ playbook_dir }}/.devcontainer/php/install.sh"
-        dest: "{{ playbook_dir }}/.devcontainer/php/html/install.sh"
+        src: "{{ playbook_dir }}/docker/php/install.sh"
+        dest: "{{ playbook_dir }}/docker/php/html/install.sh"
         mode: '0755'
 
     - name: db/init ディレクトリが存在するか確認（なければ作成）
       file:
-        path: "{{ playbook_dir }}/.devcontainer/db/init"
+        path: "{{ playbook_dir }}/docker/db/init"
         state: directory
 
     - name: SQL 初期化ファイルを生成
       template:
         src: templates/init.sql.j2
-        dest: "{{ playbook_dir }}/.devcontainer/db/init/init.sql"
+        dest: "{{ playbook_dir }}/docker/db/init/init.sql"
 
     - name: proxy/ssl ディレクトリが存在するか確認（なければ作成）
       file:
-        path: "{{ playbook_dir }}/.devcontainer/proxy/ssl"
+        path: "{{ playbook_dir }}/docker/proxy/ssl"
         state: directory
 
     - name: mkcertをインストール（macOS）
@@ -56,7 +56,7 @@
 
     - name: SSL証明書ファイルの生成（存在しない場合のみ）
       command: >
-        mkcert -cert-file {{ playbook_dir }}/.devcontainer/proxy/ssl/localhost.pem
-               -key-file {{ playbook_dir }}/.devcontainer/proxy/ssl/localhost-key.pem localhost
+        mkcert -cert-file {{ playbook_dir }}/docker/proxy/ssl/localhost.pem
+               -key-file {{ playbook_dir }}/docker/proxy/ssl/localhost-key.pem localhost
       args:
-        creates: "{{ playbook_dir }}/.devcontainer/proxy/ssl/localhost.pem"
+        creates: "{{ playbook_dir }}/docker/proxy/ssl/localhost.pem"

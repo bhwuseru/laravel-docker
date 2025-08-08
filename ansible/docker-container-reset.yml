@@ -5,7 +5,7 @@
     - vars/secrets.yml
 
   vars:
-    project_dir: "{{ playbook_dir }}/.devcontainer"
+    project_dir: "{{ playbook_dir }}/docker"
 
   tasks:
     - name: .env ファイルが存在するか確認

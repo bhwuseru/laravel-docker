@@ -22,7 +22,7 @@
           when: docker_compose_old.rc == 0
           shell: docker-compose build --no-cache && docker-compose up -d
           args:
-            chdir: "{{ playbook_dir }}/.devcontainer"
+            chdir: "{{ playbook_dir }}/docker"
 
         - name: Docker Compose（プラグイン）でビルド＆起動
           when:
@@ -30,7 +30,7 @@
             - docker_compose_plugin.rc == 0
           shell: docker compose build --no-cache && docker compose up -d
           args:
-            chdir: "{{ playbook_dir }}/.devcontainer"
+            chdir: "{{ playbook_dir }}/docker"
 
         - name: Docker Compose が存在しない場合の通知
           when:

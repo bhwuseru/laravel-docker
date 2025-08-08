@@ -1,7 +1,6 @@
 #!/bin/sh
 
 LARAVEL_DIR="/var/www/html/${PROJECT_NAME}"
-TARGET_DEVCONTAINER="${LARAVEL_DIR}/.devcontainer.json"
 
 # Laravel メジャーバージョン抽出
 LARAVEL_MAJOR_VERSION=$(echo "$LARAVEL_VERSION" | cut -d'.' -f1)

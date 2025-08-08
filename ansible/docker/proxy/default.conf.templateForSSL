@@ -1,0 +1,70 @@
+server {
+    listen       80;
+    return 301 https://$host:${PROXY_SSL_PORT}$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name ${HOSTNAME};                   # or IP
+    client_max_body_size 10m;
+
+    ssl_certificate     /etc/nginx/ssl/localhost.pem;
+    ssl_certificate_key /etc/nginx/ssl/localhost-key.pem;
+
+    root   /var/www/html/${PROJECT_NAME}/public;
+    index  index.php;
+
+    # ---- Laravel ----
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass   php:9000;
+        fastcgi_index  index.php;
+        include        fastcgi_params;
+        fastcgi_param  SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    # ---- Vite(HMR) ----
+    # php コンテナ内で動いている vite dev server へ
+    set $vite http://php:${VITE_PORT};
+
+    # HMR ランタイム
+    location ^~ /@vite {
+        proxy_pass $vite;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+    }
+
+    # React Refresh
+    location ^~ /@react-refresh {
+        proxy_pass $vite;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+    }
+
+    # 開発用のソース・依存配信
+    location ^~ /src/ {
+        proxy_pass $vite;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+    }
+    location ^~ /node_modules/ {
+        proxy_pass $vite;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+    }
+
+    # WebSocket(HMRチャンネル)
+    location ^~ /vite/ {
+        proxy_pass $vite;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}

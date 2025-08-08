@@ -4,5 +4,5 @@ configurationCache.log
 dryrun.log
 targets.log
 *.pem
-!.devcontainer/*
+!docker/*
 .*/*
