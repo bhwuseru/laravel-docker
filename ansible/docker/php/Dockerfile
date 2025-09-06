@@ -47,6 +47,7 @@ RUN apt-get clean && apt-get update \
   libfontconfig1 \
   libxrender1 \
   libicu-dev \
+  ffmpeg \
   # Playwright のブラウザ実行に必要な依存パッケージを追加 
   libnss3 \
   libatk1.0-0 \

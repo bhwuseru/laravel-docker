@@ -8,6 +8,9 @@ server {
     listen [::]:443 ssl;
     server_name ${HOSTNAME};
 
+    # （ファイルサイズ8GBまで許可）
+    client_max_body_size 8192M;
+
     ssl_certificate     /etc/nginx/ssl/localhost.pem;
     ssl_certificate_key /etc/nginx/ssl/localhost-key.pem;
 
