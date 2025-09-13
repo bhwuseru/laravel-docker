@@ -58,7 +58,9 @@ services:
     # コンテナ内の/etc/hostsのIPとホスト名を紐づけたい場合はアンコメントアウト
     extra_hosts:
       - "${HOSTNAME}:${HOST_IP}" 
-
+    sysctls:
+      - fs.inotify.max_user_watches=524288
+      - fs.inotify.max_user_instances=512
   mail:
     image: mailhog/mailhog
     container_name: ${APP_NAME}-mailhog
