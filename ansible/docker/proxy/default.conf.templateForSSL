@@ -33,6 +33,16 @@ server {
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     }
 
+    # WebSocketの設定
+    location /wss/ {
+        proxy_pass http://php:${WEBSOCKET_PORT}; # WebSocketポート
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
     # ================== Vite dev を HTTPS 配下で見せる ==================
     # 共通: Vite へ投げるときの推奨オプション
     # （各 location で繰り返し指定している。数展開のテンプレなのでそのままに）

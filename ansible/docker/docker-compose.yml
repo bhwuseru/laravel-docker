@@ -21,8 +21,9 @@ services:
       PROXY_SSL_PORT: ${PROXY_SSL_PORT}
       VITE_PORT: ${VITE_PORT}
       HOSTNAME: ${HOSTNAME}
+      WEBSOCKET_PORT: ${WEBSOCKET_PORT}
     # 環境変数を渡す
-    command: /bin/sh -c "envsubst '$$PROJECT_NAME $$PROXY_SSL_PORT $$VITE_PORT $$HOSTNAME ' \
+    command: /bin/sh -c "envsubst '$$PROJECT_NAME $$PROXY_SSL_PORT $$VITE_PORT $$HOSTNAME $$WEBSOCKET_PORT  ' \
       < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf \
       && nginx -g 'daemon off;'"
     hostname: ${HOSTNAME}
@@ -40,14 +41,9 @@ services:
         USER: ${USER}
         PASSWORD: ${DB_PASSWORD}
     container_name: ${APP_NAME}-php
-    # ports:
-    #   - ${PHP_SERVE_PORT}:8000
-    #   - ${VITE_PORT}:${VITE_PORT}
-    #   - ${REACT_PORT}:3000
-    #   - ${WEBSOCKET_PORT}:8080
     expose:
-      - "8000"
       - "${VITE_PORT}"
+      - "${WEBSOCKET_PORT}"
     depends_on:
       - db
     volumes:
