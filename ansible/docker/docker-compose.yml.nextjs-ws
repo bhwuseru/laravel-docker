@@ -22,8 +22,11 @@ services:
       PHP_VITE_PORT: ${PHP_VITE_PORT}
       HOSTNAME: ${HOSTNAME}
       WEBSOCKET_PORT: ${WEBSOCKET_PORT}
+      PHP_SUBDOMAIN: ${PHP_SUBDOMAIN}
+      NODE_SUBDOMAIN: ${NODE_SUBDOMAIN}
+      WS_SUBDOMAIN: ${WS_SUBDOMAIN}
     # 環境変数を渡す
-    command: /bin/sh -c "envsubst '$$PROJECT_NAME $$PROXY_SSL_PORT $$PHP_VITE_PORT $$HOSTNAME $$WEBSOCKET_PORT  ' \
+    command: /bin/sh -c "envsubst '$$PROJECT_NAME $$PROXY_SSL_PORT $$PHP_VITE_PORT $$HOSTNAME $$WEBSOCKET_PORT $$PHP_SUBDOMAIN $$NODE_SUBDOMAIN $$WS_SUBDOMAIN ' \
       < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf \
       && nginx -g 'daemon off;'"
     hostname: ${HOSTNAME}
@@ -43,7 +46,7 @@ services:
     container_name: ${APP_NAME}-php
     expose:
       - "${PHP_VITE_PORT}"
-      - "${WEBSOCKET_PORT}"
+      # - "${WEBSOCKET_PORT}"
     depends_on:
       - db
     volumes:
@@ -55,6 +58,48 @@ services:
     extra_hosts:
       - "${HOSTNAME}:${HOST_IP}" 
 
+  node:
+    build:
+      context: ./node
+      args:
+        PROJECT_NAME: ${PROJECT_NAME}
+        USER: ${USER}
+        PASSWORD: ${DB_PASSWORD}
+    container_name: ${APP_NAME}-node
+    expose:
+      - "${NODE_PORT}"
+      # - "${WEBSOCKET_PORT}"
+    depends_on:
+      - db
+    volumes:
+      - ./node/html/:/var/www/html
+      - ~/.cache/ms-playwright:/home/node/.cache/ms-playwright
+    tty: true
+    # コンテナ内の/etc/hostsのIPとホスト名を紐づけたい場合はアンコメントアウト
+    extra_hosts:
+      - "${HOSTNAME}:${HOST_IP}" 
+  websocket:
+    build:
+      context: ./websocket
+      dockerfile: Dockerfile
+      args:
+        PROJECT_NAME: ${PROJECT_NAME}
+        USER: ${USER}
+        PASSWORD: ${DB_PASSWORD}
+    container_name: ${APP_NAME}-websocket
+    expose:
+      - "${WEBSOCKET_PORT}"
+    # 外部公開が必要な場合のみ
+    ports:
+      - "${WEBSOCKET_PORT}:${WEBSOCKET_PORT}" 
+    volumes:
+      - ./websocket/html/:/var/www/html
+    environment:
+      TZ: Asia/Tokyo
+      PORT: ${WEBSOCKET_PORT}
+    tty: true
+    extra_hosts:
+      - "${HOSTNAME}:${HOST_IP}"
   mail:
     image: mailhog/mailhog
     container_name: ${APP_NAME}-mailhog

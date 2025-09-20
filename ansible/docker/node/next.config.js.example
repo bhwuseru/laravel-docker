@@ -1,0 +1,14 @@
+/** @type {import('next').NextConfig} */
+
+const isDevelopmet = process.env.NODE_ENV !== 'production'    
+const nextConfig = {
+  // output/index.htmlを生成する場合は下記を追記
+  output: 'export',
+  images: {
+    unoptimized: true
+  },
+	assetPrefix: isDevelopmet ? '' : '',   
+}
+
+
+module.exports = nextConfig
