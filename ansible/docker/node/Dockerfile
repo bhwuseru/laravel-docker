@@ -36,6 +36,7 @@ RUN mkdir -p /home/node/.npm && chown -R node:node /home/node/.npm
 
 # .bashrcをコピー
 COPY .bashrc /home/node/.bashrc
+COPY install.sh /var/www/html/install.sh
 
 # `/var/www/html` の作成とパーミッション設定
 RUN mkdir -p /var/www/html && chown -R node:node /var/www/html
