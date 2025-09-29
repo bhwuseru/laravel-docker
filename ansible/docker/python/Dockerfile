@@ -1,64 +1,58 @@
 # NVIDIAのCUDAベースイメージを使用
 # FROM nvidia/cuda:12.2.0-cudnn8-runtime-ubuntu22.04
+
+# NVIDIA CUDA 11.8 (安定版, Ubuntu 22.04 ベース)
 FROM nvidia/cuda:11.8.0-runtime-ubuntu22.04
 
-# コンテナ内の環境変数を定義するための引数
+# ビルド時引数
 ARG PROJECT_NAME
 ARG PASSWORD
 ARG USER
 
-# 環境変数を設定する
+# 環境変数
 ENV PROJECT_NAME=${PROJECT_NAME}
 ENV USER=${USER}
 ENV PASSWORD=${PASSWORD}
-
-# ロケール設定
 ENV LANG=ja_JP.UTF-8
 ENV LANGUAGE=ja_JP:jp
 ENV LC_ALL=ja_JP.UTF-8
-
-# タイムゾーンを設定
 ENV TZ=Asia/Tokyo
 
-# 必要なパッケージをインストール
+# bash をデフォルトシェルにする
+SHELL ["/bin/bash", "-c"]
+
+# パッケージのインストール
 RUN apt-get update && apt-get install -y \
-    nvidia-utils-535 \
     locales \
     python3 python3-venv python3-pip \
-    ffmpeg \
-    git \
-    vim \
-    direnv \
-    curl \
-    wget && \
-    echo "ja_JP.UTF-8 UTF-8" >> /etc/locale.gen && \
-    locale-gen && \
-    rm -rf /var/lib/apt/lists/* && \
-    git config --global core.editor vim
+    ffmpeg git vim direnv curl wget sudo \
+    && echo "ja_JP.UTF-8 UTF-8" > /etc/locale.gen \
+    && locale-gen ja_JP.UTF-8 \
+    && rm -rf /var/lib/apt/lists/*
 
-# 必要なPythonライブラリをインストール
-# RUN pip install --no-cache-dir \
-#     --upgrade numba \
-#     numpy==1.24.3 \
-#     numba==0.60.0 \
-#     fastapi \
-#     uvicorn \
-#     jinja2 \
-#     basicsr \
-#     opencv-python-headless \
-#     python-multipart
+# git のエディタを vi に
+RUN git config --global core.editor "vi"
 
-# PyTorchのインストール（CUDA 11.8対応）
-RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+# ユーザー作成（一般権限）
+RUN useradd -m -s /bin/bash ${USER} --uid 1000 && \
+    gpasswd -a ${USER} sudo && \
+    echo "${USER}:${PASSWORD}" | chpasswd && \
+    echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER}
 
-# .bashrcをコピー
-COPY .bashrc /home/root/.bashrc
+# ユーザー切替
+USER ${USER}
+WORKDIR /var/www/html
+
+RUN pip install --upgrade pip
+
+# requirements.txt をコピー
+COPY requirements.txt /var/www/html/requirements.txt
+# RUN source venv/bin/activate && pip install -r requirements.txt
+
+# .bashrc をコピー
+COPY .bashrc /home/${USER}/.bashrc
+
+# FastAPI 起動スクリプトなどをコピー
 COPY install.sh /var/www/html/install.sh
 COPY main.py /var/www/html/main.py
 COPY start_app.sh /var/www/html/start_app.sh
-
-# 作業ディレクトリを設定
-WORKDIR /var/www/html
-
-# エントリポイントを指定
-CMD ["python3"]
