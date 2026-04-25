@@ -1,4 +1,4 @@
-FROM --platform=linux/x86_64 php:8.4-fpm
+FROM --platform=linux/x86_64 php:8.5-fpm
 # FROM --platform=linux/x86_64 php:7.4-fpm
 
 # 引数を受け取ってコンテナ内で環境変数を定義
@@ -101,13 +101,20 @@ RUN echo "${USER}:${PASSWORD}" | chpasswd
 # sudo実行時のパスワード入力を省略
 RUN echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER}
 
+# /var/www/htmlディレクトリの所有権をユーザーに変更
+RUN chown -R ${USER}:${USER} /var/www/html
+
 # .bashrcをコピー
 COPY .bashrc /home/${USER}/.bashrc
+
 # ユーザーの切替
 USER ${USER}
 
 # 作業ディレクトリに移動
 WORKDIR /var/www/html
+
+# Laravelプロジェクト作成用のディレクトリ準備
+RUN mkdir -p /var/www/html
 
 # bashに切り替え
 RUN /bin/bash
